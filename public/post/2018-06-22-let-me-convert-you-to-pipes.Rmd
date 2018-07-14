@@ -1,0 +1,31 @@
+---
+title: Let me convert you to pipes
+author: Joe Powers
+date: '2018-06-22'
+slug: let-me-convert-you-to-pipes
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+My mother (like many mothers) still has an AOL account. I think her reasoning is that AOL was so difficult to learn, investing the effort to learn gmail is just too daunting. I'll leave it at that. 
+
+If you're not using pipes (%>%) in your R code, you basically have an AOL account.
+
+The following sequences are identical in their meaning, but see which one is more human readable: 
+````{}
+eat(butter(toast(slice(grab(bread)))))
+
+bread %>%
+  grab() %>%
+  slice() %>%
+  toast() %>%
+  butter() %>%
+  eat()
+````
+
+This is the beauty of pipes (and R generally): It let's you think about data in a more human way. 

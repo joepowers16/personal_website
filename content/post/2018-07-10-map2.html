@@ -1,0 +1,74 @@
+---
+title: Map2
+author: Joe Powers
+date: '2018-07-10'
+slug: map2
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+
+
+<p>Note that <code>map2()</code> seems to requires vector arguments in the form <code>df$var</code></p>
+<pre class="r"><code>library(dplyr)
+library(purrr)
+
+# Create frequency table
+ds_cyl_n &lt;- mtcars %&gt;% count(cyl)
+    
+# Create custom function for use in map()
+my_sample_n &lt;- function(x, y){
+    
+    mtcars %&gt;% 
+        filter(cyl == x) %&gt;% 
+        sample_n( 
+            size = y, 
+            replace = TRUE
+        ) 
+}
+    
+# hacky map
+map2_df(.x = ds_cyl_n$cyl, .y = ds_cyl_n$n, .f = my_sample_n)</code></pre>
+<p><code>pmap()</code> should be able to handle the dataframe as an argument but only when the column names are the same as the argument names expected by the function.</p>
+<pre class="r"><code># Create frequency table
+ds_cyl_n &lt;- 
+  mtcars %&gt;% 
+  count(cyl) %&gt;% 
+  rename(cyl_n = cyl, size = n)
+    
+# Create custom function for use in map()
+my_sample_n &lt;- function(cyl_n){
+    
+    mtcars %&gt;% 
+        filter(cyl == cyl_n) %&gt;% # struggling here to filter based on argument in df
+        sample_n(replace = TRUE) 
+}
+    
+# hacky map
+pmap(ds_cyl_n, my_sample_n)</code></pre>
+<pre class="r"><code>library(dplyr)
+library(purrr)
+
+# Create frequency table
+ds_cyl_n &lt;- mtcars %&gt;% count(cyl)
+    
+# Create custom function for use in map()
+my_sample_n &lt;- function(x, y){
+    x &lt;- enquo(x)
+    y &lt;- enquo(y)
+    
+    mtcars %&gt;% 
+        filter(cyl == !!x) %&gt;% 
+        sample_n( 
+            size = !!y, 
+            replace = TRUE
+        ) 
+}
+    
+# hacky map
+map2(.x = ds_cyl_n$cyl, .y = ds_cyl_n$n, .f = my_sample_n)</code></pre>

@@ -1,0 +1,309 @@
+---
+title: Statistical Power in Workplace Experiments
+author: Joe Powers
+date: '2018-06-27'
+slug: statistical-power-in-workplace-experiments
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+
+
+<p>Let’s do a little primer on probability. If I flip a coin, what is the probability I’ll get heads? 50%, let’s make it even easier and say 1 in 2. If I roll a die, what is the probability I’ll roll a 2? 1 in 6.</p>
+<p>Let;s take an example of a noteworthy but subtle effect size. If women feel 1/3 of a point less included than men on a 5-pt scale with an SD of 1, what is the probability I will detect a significant difference with 30 people per cell? 1 in 5. Let that sink in. On 4 out of 5 surveys we would return with the wrong answer, detecting no significant difference or detecting a difference in the wrong direction.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.5     
+## ✔ tibble  1.4.2          ✔ dplyr   0.7.5     
+## ✔ tidyr   0.8.0          ✔ stringr 1.3.1     
+## ✔ readr   1.1.1          ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(genepa)</code></pre>
+<p>So you’ve been asked by a business partner about sufficient sample size in an upcoming experiment. At baseline, male and female employees rated their feelings of inclusion on a 5-pt scale as 3.9 and 3.2 respectively. This is an effect size of .7 and the SD is 1.5.</p>
+<p>This pilot had statistical power of just 25%.</p>
+<pre class="r"><code>set.seed(53)
+
+clip_tails &lt;- function(x) {
+  case_when(
+    x &lt; 1 ~ 1,
+    x &gt; 5 ~ 5,
+    TRUE ~ x
+  )
+}
+
+ds_temp &lt;- 
+  matrix(ncol = 2, nrow = 30) %&gt;% 
+  data.frame() %&gt;% 
+  setNames(c(&quot;male&quot;, &quot;female&quot;)) %&gt;% 
+  mutate(
+    male   = rnorm(n = 30, mean = 4.2, sd = 1.5) %&gt;% clip_tails(),
+    female = rnorm(n = 30, mean = 3.7, sd = 1.5) %&gt;% clip_tails()
+  ) %&gt;% 
+  gather(key = gender, value = inclusion)</code></pre>
+<pre class="r"><code>ds_temp %&gt;% 
+  t.test(inclusion ~ gender, .) %&gt;% 
+  broom::glance()</code></pre>
+<pre><code>##     estimate estimate1 estimate2 statistic    p.value parameter  conf.low
+## 1 -0.6523005  3.228678  3.880978 -2.142095 0.03640996  57.81469 -1.261895
+##     conf.high                  method alternative
+## 1 -0.04270562 Welch Two Sample t-test   two.sided</code></pre>
+<pre class="r"><code>ds_sd &lt;- 
+  ds_temp %&gt;% 
+  group_by(gender) %&gt;% 
+  summarise(sd = sd(inclusion))
+
+SD_pooled &lt;- 
+  sqrt(
+  (ds_sd$sd[1]^2 + ds_sd$sd[2]^2) / 2
+)</code></pre>
+<pre class="r"><code>power.t.test(n = 30, delta = -0.6523005, sd = SD_pooled)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 30
+##           delta = 0.6523005
+##              sd = 1.179382
+##       sig.level = 0.05
+##           power = 0.5582691
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<pre class="r"><code>power.t.test(power = .8, delta = -0.6523005, sd = SD_pooled)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 52.29376
+##           delta = 0.6523005
+##              sd = 1.179382
+##       sig.level = 0.05
+##           power = 0.8
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>52 per group</p>
+<pre class="r"><code>power.t.test(power = .8, delta = .3, sd = SD_pooled)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 243.5716
+##           delta = 0.3
+##              sd = 1.179382
+##       sig.level = 0.05
+##           power = 0.8
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>243 per group</p>
+<div id="if-sd-is-1" class="section level2">
+<h2>If SD is 1:</h2>
+<pre class="r"><code>power.t.test(power = .8, delta = .3, sd = 1)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 175.3851
+##           delta = 0.3
+##              sd = 1
+##       sig.level = 0.05
+##           power = 0.8
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+</div>
+<div id="can-you-simulate-this-power" class="section level1">
+<h1>Can you simulate this power?</h1>
+<pre class="r"><code>set.seed(53)
+
+clip_tails &lt;- function(x) {
+  case_when(
+    x &lt; 1 ~ 1,
+    x &gt; 5 ~ 5,
+    TRUE ~ x
+  )
+}
+
+ds_temp &lt;- 
+  matrix(ncol = 2, nrow = 7E3) %&gt;% 
+  data.frame() %&gt;% 
+  setNames(c(&quot;men&quot;, &quot;women&quot;)) %&gt;% 
+  mutate(
+    men   = rnorm(n = 7E3, mean = 4.0, sd = 1.5) %&gt;% clip_tails(),
+    women = rnorm(n = 7E3, mean = 3.7, sd = 1.5) %&gt;% clip_tails()
+  ) %&gt;% 
+  gather(key = gender, value = inclusion)</code></pre>
+<pre class="r"><code>power.t.test(delta = .3, sd = 1, n = 30)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 30
+##           delta = 0.3
+##              sd = 1
+##       sig.level = 0.05
+##           power = 0.2068937
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<pre class="r"><code>t_rand &lt;- function(){
+  ds_temp %&gt;% 
+  group_by(gender) %&gt;% 
+  sample_n(30) %&gt;% 
+  t.test(inclusion ~ gender, .) %&gt;% 
+  broom::glance() %&gt;% 
+  select(estimate, p.value)
+}</code></pre>
+<pre class="r"><code>ds_rep &lt;- 
+  replicate(10000, t_rand(), simplify = &quot;data.frame&quot;) %&gt;% 
+  t() %&gt;% 
+  as.data.frame() %&gt;% 
+  as_tibble() %&gt;% 
+  unnest()</code></pre>
+<pre class="r"><code>ds_rep %&gt;% 
+  summarise(estiamte = mean(estimate))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   estiamte
+##      &lt;dbl&gt;
+## 1    0.221</code></pre>
+<pre class="r"><code>ds_rep %&gt;% 
+  ggplot(aes(y = p.value, x = estimate)) +
+  geom_hline(yintercept = .05, color = &quot;red&quot;) + 
+  # geom_vline(xintercept = 0, color = &quot;black&quot;) +
+  geom_vline(xintercept = .3, color = gblue) +
+  annotate(&quot;label&quot;, x = .6, y = .6, label = &quot;True Difference is 0.3&quot;) + 
+  scale_y_continuous(
+    breaks = c(.05, seq(.25, 1, by = .25)),
+    limits = c(0,1)
+  ) +
+  scale_x_continuous(
+    breaks = seq(-.6, 1.2, by = .3),
+    limits = c(-.6, 1.2)
+  ) +
+  geom_point(shape = 21, color = &quot;white&quot;, fill = gblue) + 
+  labs(
+    y = &quot;Observed p-value&quot;, 
+    x = &quot;Observed difference&quot;,
+    title = breakup(&quot;Running 1,000 simulations of studies with 21% power, we see significant effects in the right direction only 21% of the time&quot;, 40)) + 
+ theme_genepa()</code></pre>
+<pre><code>## Warning: Removed 37 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2018-06-27-statistical-power-in-workplace-experiments_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>label_round &lt;- function(x){
+  round(x, 1)
+  }
+
+ds_rep %&gt;% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram(binwidth = .05, fill = gblue) +
+  geom_vline(xintercept = .3, color = gred, size = 1) +
+  annotate(&quot;label&quot;, x = .3, y = 100, label = &quot;True Difference is 0.3&quot;) + 
+  scale_x_continuous(
+    breaks = seq(-0.9, 1.2, by = .3),
+    labels = label_round,
+    limits = c(-0.9, 1.3)
+    ) + 
+  labs(
+    x = &quot;Observed difference&quot;,
+    title = breakup(&quot;Running 10,000 simulations we see a normal-ish distribution of differences centered around the true difference&quot;, 40)) + 
+ theme_genepa()</code></pre>
+<p><img src="/post/2018-06-27-statistical-power-in-workplace-experiments_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Areas to explore further: __ How to compute power when data are not normally distributed (i.e., survey data which are bounded by response limits of 1 &amp; 7). __ Also note how the clipping of the data on the right (e.g, values about 5 were clipped) lead to a biased estimate of .22 in a simulation of 10,000 t.tests.</p>
+</div>
+<div id="simulate-t-test-with-male-and-female-heights-a-2-sd-difference-data-from-columbia" class="section level1">
+<h1>__Simulate t-test with male and female heights, a 2 SD difference data from <a href="www.stat.columbia.edu/~martin/W1111/Review2.pdf">Columbia</a></h1>
+<pre class="r"><code>MN_m &lt;- 69.1
+SD_m &lt;- 2.9
+MN_f &lt;- 63.7
+SD_f &lt;- 2.7
+
+SD_pooled &lt;- sqrt(
+  (SD_m^2 + SD_f^2) / 2
+)
+
+(MN_m - MN_f) / SD_pooled # = 1.9 SDs</code></pre>
+<pre><code>## [1] 1.927343</code></pre>
+<pre class="r"><code>ds_ht &lt;- 
+  matrix(ncol = 2, nrow = 1E3) %&gt;% 
+  data.frame() %&gt;% 
+  setNames(c(&quot;men&quot;, &quot;women&quot;)) %&gt;% 
+  mutate(
+    men   = rnorm(n = 1000, mean = MN_m, sd = SD_m),
+    women = rnorm(n = 1000, mean = MN_f, sd = SD_f)
+  ) %&gt;% 
+  gather(key = gender, value = inches)
+
+power.t.test(power = .8, delta = MN_m - MN_f, sd = SD_pooled)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 5.379062
+##           delta = 5.4
+##              sd = 2.801785
+##       sig.level = 0.05
+##           power = 0.8
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>For height you only need 5 people per cell to achieve 80% power.</p>
+<pre class="r"><code>t_rand &lt;- function(){
+  ds_ht %&gt;% 
+  group_by(gender) %&gt;% 
+  sample_n(5) %&gt;% 
+  t.test(inches ~ gender, .) %&gt;% 
+  broom::glance() %&gt;% 
+  select(estimate, p.value)
+}</code></pre>
+<pre class="r"><code>ds_rep &lt;- 
+  replicate(10000, t_rand(), simplify = &quot;data.frame&quot;) %&gt;% 
+  t() %&gt;% 
+  as.data.frame() %&gt;% 
+  as_tibble() %&gt;% 
+  unnest()</code></pre>
+<pre class="r"><code>ds_rep %&gt;% 
+  summarise(estimate = mean(estimate))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   estimate
+##      &lt;dbl&gt;
+## 1     5.48</code></pre>
+<pre class="r"><code>label_diff_in &lt;- paste(&quot;True Difference is&quot;, round(MN_m - MN_f, 1), &quot;inches&quot;)
+
+ds_rep %&gt;% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram(binwidth = .5, fill = gblue) +
+  geom_vline(xintercept = (MN_m - MN_f), color = gred, size = 1) +
+  annotate(&quot;label&quot;, x = (MN_m - MN_f), y = 100, label = label_diff_in) + 
+  # scale_x_continuous(
+  #   breaks = seq(-0.9, 1.2, by = .3),
+  #   labels = label_round,
+  #   limits = c(-0.9, 1.3)
+  #   ) + 
+  # labs(
+  #   x = &quot;Observed difference&quot;,
+  #   title = breakup(&quot;Running 10,000 simulations we see a normal-ish distribution of differences centered around the true difference&quot;, 40)) + 
+ theme_genepa()</code></pre>
+<p><img src="/post/2018-06-27-statistical-power-in-workplace-experiments_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>ds_rep %&gt;% 
+  ggplot(aes(y = p.value, x = estimate)) +
+  scale_y_continuous(
+    breaks = c(.05, seq(.25, 1, by = .25)),
+    limits = c(0,1)
+  ) +
+  scale_x_continuous(
+    breaks = seq(-2, 12, by = 2),
+    limits = c(-2, 12)
+  ) +
+  geom_point(shape = 21, color = &quot;white&quot;, fill = gblue) + 
+  geom_hline(yintercept = .05, color = &quot;red&quot;) + 
+  geom_vline(xintercept = MN_m - MN_f, color = gblue) +
+  annotate(&quot;label&quot;, x = MN_m - MN_f, y = .6, label = label_diff_in, hjust = -.1) + 
+  labs(
+    y = &quot;Observed p-value&quot;, 
+    x = &quot;Observed difference&quot;,
+    title = breakup(&quot;10,000 simulations of studies with 80% power&quot;, 40)) + 
+ theme_genepa()</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2018-06-27-statistical-power-in-workplace-experiments_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>

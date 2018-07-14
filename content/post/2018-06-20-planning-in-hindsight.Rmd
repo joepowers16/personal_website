@@ -1,0 +1,14 @@
+---
+title: Planning in Hindsight
+author: Joe Powers
+date: '2018-06-20'
+slug: planning-in-hindsight
+categories: []
+tags: []
+description: ''
+featured: 'planning_pic.jpg'
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+

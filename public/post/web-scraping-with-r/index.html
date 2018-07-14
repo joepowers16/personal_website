@@ -1,0 +1,1916 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "/"
+        },
+        "articleSection" : "post",
+        "name" : "web scraping with R",
+        "headline" : "web scraping with R",
+        "description" : "Using Jason Goodman’s post as a launch pad I started scarping data.
+library(rvest) ## Loading required package: xml2 school_ranks_url &lt;- &quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&quot; wp_ranks &lt;- read_html(school_ranks_url) ranks_raw &lt;- html_nodes(wp_ranks, &quot;td&quot;) %&gt;% html_text() class(ranks_raw) ## [1] &quot;character&quot; matrix(ranks_raw, ncol = 9, nrow = 153) %&gt;% data.frame() ## X1 X2 ## 1 1 18 ## 2 Walnut Valley Unified Manhattan Beach Unified ## 3 $597,800 $1,000,000 ## 4 1722 1776 ## 5 402 413 ## 6 98.",
+        "inLanguage" : "en",
+        "author" : "",
+        "creator" : "",
+        "publisher": "",
+        "accountablePerson" : "",
+        "copyrightHolder" : "",
+        "copyrightYear" : "2018",
+        "datePublished": "2018-07-10 00:00:00 &#43;0000 UTC",
+        "dateModified" : "2018-07-10 00:00:00 &#43;0000 UTC",
+        "url" : "/post/web-scraping-with-r/",
+        "wordCount" : "3319",
+        "keywords" : [ "Blog" ]
+    }
+    </script>
+        
+            
+                <title>web scraping with R</title>
+            
+        
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content="Hugo 0.42.1" />
+        
+
+
+        
+            <meta name="author" content="Joe Powers">
+        
+        
+            
+                <meta name="description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo">
+            
+        
+
+        <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="web scraping with R"/>
+<meta name="twitter:description" content="Using Jason Goodman’s post as a launch pad I started scarping data.
+library(rvest) ## Loading required package: xml2 school_ranks_url &lt;- &quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&quot; wp_ranks &lt;- read_html(school_ranks_url) ranks_raw &lt;- html_nodes(wp_ranks, &quot;td&quot;) %&gt;% html_text() class(ranks_raw) ## [1] &quot;character&quot; matrix(ranks_raw, ncol = 9, nrow = 153) %&gt;% data.frame() ## X1 X2 ## 1 1 18 ## 2 Walnut Valley Unified Manhattan Beach Unified ## 3 $597,800 $1,000,000 ## 4 1722 1776 ## 5 402 413 ## 6 98."/>
+<meta name="twitter:site" content="@example"/>
+
+        <meta property="og:title" content="web scraping with R" />
+<meta property="og:description" content="Using Jason Goodman’s post as a launch pad I started scarping data.
+library(rvest) ## Loading required package: xml2 school_ranks_url &lt;- &quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&quot; wp_ranks &lt;- read_html(school_ranks_url) ranks_raw &lt;- html_nodes(wp_ranks, &quot;td&quot;) %&gt;% html_text() class(ranks_raw) ## [1] &quot;character&quot; matrix(ranks_raw, ncol = 9, nrow = 153) %&gt;% data.frame() ## X1 X2 ## 1 1 18 ## 2 Walnut Valley Unified Manhattan Beach Unified ## 3 $597,800 $1,000,000 ## 4 1722 1776 ## 5 402 413 ## 6 98." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/web-scraping-with-r/" />
+
+
+
+<meta property="article:published_time" content="2018-07-10T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2018-07-10T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+        <meta property="og:image" content="//images/logo.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="512">
+        <meta property="og:image:height" content="512">
+        
+<meta itemprop="name" content="web scraping with R">
+<meta itemprop="description" content="Using Jason Goodman’s post as a launch pad I started scarping data.
+library(rvest) ## Loading required package: xml2 school_ranks_url &lt;- &quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&quot; wp_ranks &lt;- read_html(school_ranks_url) ranks_raw &lt;- html_nodes(wp_ranks, &quot;td&quot;) %&gt;% html_text() class(ranks_raw) ## [1] &quot;character&quot; matrix(ranks_raw, ncol = 9, nrow = 153) %&gt;% data.frame() ## X1 X2 ## 1 1 18 ## 2 Walnut Valley Unified Manhattan Beach Unified ## 3 $597,800 $1,000,000 ## 4 1722 1776 ## 5 402 413 ## 6 98.">
+
+
+<meta itemprop="datePublished" content="2018-07-10T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-07-10T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3319">
+
+
+
+<meta itemprop="keywords" content="" />
+
+        
+
+        
+            
+        
+
+        
+        
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,800,900|Source+Sans+Pro:400,700">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.css">
+            <link rel="stylesheet" href="/css/main.css">
+            <link rel="stylesheet" href="/css/add-on.css">
+            <link rel="stylesheet" href="/css/academicons.min.css">
+        
+
+        
+            
+                
+            
+        
+
+
+  
+    
+    <link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+  
+
+
+      
+    </head>
+    <body>
+
+      
+      <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+      <h1><a href="/">post</a></h1>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                            <i class="fa fa-home">&nbsp;</i>Home
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                            <i class="fa fa-id-card-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/blog/">
+                            <i class="fa fa-newspaper-o">&nbsp;</i>Blog
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/itemized/">
+                            <i class="fa fa-list">&nbsp;</i>Itemized
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/categories/">
+                            <i class="fa fa-sitemap">&nbsp;</i>Categories
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/contact/">
+                            <i class="fa fa-envelope-o">&nbsp;</i>Contact
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="as_sitesearch" value="/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="as_sitesearch" value="/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                <i class="fa fa-home">&nbsp;</i>Home
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                <i class="fa fa-id-card-o">&nbsp;</i>About
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/blog/">
+                            <h3>
+                                <i class="fa fa-newspaper-o">&nbsp;</i>Blog
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/itemized/">
+                            <h3>
+                                <i class="fa fa-list">&nbsp;</i>Itemized
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/categories/">
+                            <h3>
+                                <i class="fa fa-sitemap">&nbsp;</i>Categories
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/contact/">
+                            <h3>
+                                <i class="fa fa-envelope-o">&nbsp;</i>Contact
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section class="recent-posts">
+            <div class="mini-posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+
+                
+                    
+                
+
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/map2-vs-pmap/">map2 vs pmap</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-13'>
+                                    July 13, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/need-for-entertainment/">Need for entertainment</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-12'>
+                                    July 12, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/mutating-with-joins/">mutating with joins</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-12'>
+                                    July 12, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/list-columns-can-purrr-and-loudly/">Herding Cats with List columns</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-11'>
+                                    July 11, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/purrring/">purrring</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-11'>
+                                    July 11, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+
+                
+                    <a href=
+                        
+                            /blog/
+                        
+                        class="button">View more posts</a>
+                
+            </div>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fweb-scraping-with-r%2f&amp;text=web%20scraping%20with%20R&amp;via=example" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fweb-scraping-with-r%2f&amp;description=web%20scraping%20with%20R" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by Joe%20Powers&amp;body=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+  <header>
+    <div class="title">
+        
+            <h1><a href="/post/web-scraping-with-r/">web scraping with R</a></h1>
+            
+        
+        
+    </div>
+    <div class="meta">
+        
+
+        <time class="published"
+            datetime='2018-07-10'>
+            July 10, 2018</time>
+        <span class="author">Joe Powers</span>
+        
+            <p>16 minute read</p>
+        
+        
+    </div>
+</header>
+
+
+  
+    <section id="social-share">
+      <ul class="icons">
+        
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fweb-scraping-with-r%2f&amp;text=web%20scraping%20with%20R&amp;via=example" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fweb-scraping-with-r%2f&amp;title=web%20scraping%20with%20R" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fweb-scraping-with-r%2f&amp;description=web%20scraping%20with%20R" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by Joe%20Powers&amp;body=%2fpost%2fweb-scraping-with-r%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+      </ul>
+    </section>
+  
+
+  
+
+  <div id="content">
+    <p>Using <a href="https://medium.com/@jasonkgoodman/advice-on-building-data-portfolio-projects-c5f96d8a0627">Jason Goodman’s post</a> as a launch pad I started scarping data.</p>
+<pre class="r"><code>library(rvest)</code></pre>
+<pre><code>## Loading required package: xml2</code></pre>
+<pre class="r"><code>school_ranks_url &lt;- &quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&quot;
+
+wp_ranks &lt;- read_html(school_ranks_url)
+
+ranks_raw &lt;- html_nodes(wp_ranks, &quot;td&quot;) %&gt;% html_text()
+
+class(ranks_raw)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>matrix(ranks_raw, ncol = 9, nrow = 153) %&gt;% 
+  data.frame()</code></pre>
+<pre><code>##                            X1                             X2
+## 1                           1                             18
+## 2       Walnut Valley Unified        Manhattan Beach Unified
+## 3                    $597,800                     $1,000,000
+## 4                        1722                           1776
+## 5                         402                            413
+## 6                      98.30%                         95.30%
+## 7                      84.64%                         85.08%
+## 8                       24.56                          21.48
+## 9                       71.87                          65.49
+## 10                          2                             19
+## 11             Irvine Unified               Imperial Unified
+## 12                   $639,900                       $177,300
+## 13                       1813                           1458
+## 14                        398                            350
+## 15                     95.50%                         96.60%
+## 16                     85.07%                         78.46%
+## 17                      24.87                          23.64
+## 18                      70.44                          64.70
+## 19                          3                             20
+## 20            Arcadia Unified                Ventura Unified
+## 21                   $792,900                       $421,900
+## 22                       1789                           1602
+## 23                        399                            364
+## 24                     98.30%                         90.30%
+## 25                     83.99%                         84.01%
+## 26                      22.91                          21.92
+## 27                      70.02                          64.64
+## 28                          4                             21
+## 29   San Luis Coastal Unified            Brea-Olinda Unified
+## 30                   $484,900                       $532,100
+## 31                       1660                           1606
+## 32                        369                            385
+## 33                     96.50%                         96.40%
+## 34                     74.64%                         83.46%
+## 35                      19.08                          26.90
+## 36                      69.04                          64.31
+## 37                          5                             22
+## 38      Conejo Valley Unified        San Dieguito Union High
+## 39                   $597,500                       $813,200
+## 40                       1700                           1761
+## 41                        393                            391
+## 42                     96.30%                         97.20%
+## 43                     83.65%                         81.31%
+## 44                      22.96                          24.44
+## 45                      68.91                          64.11
+## 46                          6                             23
+## 47         San Marino Unified           Sierra Sands Unified
+## 48                 $1,000,000                       $177,100
+## 49                       1831                           1664
+## 50                        412                            357
+## 51                     99.30%                         92.70%
+## 52                     85.13%                         33.64%
+## 53                      21.26                          21.68
+## 54                      68.73                          63.76
+## 55                          7                             24
+## 56           Oak Park Unified   Santa Ynez Valley Union High
+## 57                   $637,500                       $661,300
+## 58                       1783                           1615
+## 59                        395                            365
+## 60                     95.30%                         95.60%
+## 61                     83.97%                         81.54%
+## 62                      24.25                          18.51
+## 63                      68.54                          63.72
+## 64                          8                             25
+## 65        Muroc Joint Unified Palos Verdes Peninsula Unified
+## 66                    $66,000                     $1,000,000
+## 67                       1471                           1743
+## 68                        358                            400
+## 69                     93.90%                         98.80%
+## 70                     63.33%                         84.73%
+## 71                      22.76                          22.75
+## 72                      67.74                          63.08
+## 73                          9                             26
+## 74        Temple City Unified              Claremont Unified
+## 75                   $584,500                       $505,500
+## 76                       1713                           1592
+## 77                        387                            363
+## 78                     94.60%                         97.30%
+## 79                     78.33%                         81.79%
+## 80                      25.21                          23.47
+## 81                      67.56                          63.00
+## 82                         10                             27
+## 83     South Pasadena Unified                    ABC Unified
+## 84                   $820,200                       $483,100
+## 85                       1761                           1600
+## 86                        402                            373
+## 87                     97.20%                         93.40%
+## 88                     80.25%                         71.00%
+## 89                      23.38                          23.71
+## 90                      67.44                          62.74
+## 91                         11                             28
+## 92          La Canada Unified  Placentia-Yorba Linda Unified
+## 93                 $1,000,000                       $574,100
+## 94                       1853                           1643
+## 95                        403                            379
+## 96                     97.60%                         93.20%
+## 97                     88.13%                         79.42%
+## 98                      21.68                          23.99
+## 99                      67.25                          62.72
+## 100                        12                             29
+## 101     Silver Valley Unified        Temecula Valley Unified
+## 102                  $123,200                       $300,600
+## 103                      1431                           1522
+## 104                       350                            366
+## 105                    93.90%                         94.00%
+## 106                    66.67%                         77.20%
+## 107                     18.86                          24.89
+## 108                     67.24                          62.46
+## 109                        13                             30
+## 110 Saddleback Valley Unified              Templeton Unified
+## 111                  $473,300                       $428,900
+## 112                      1627                           1604
+## 113                       384                            357
+## 114                    95.30%                         97.80%
+## 115                    83.34%                         63.86%
+## 116                     25.53                          21.65
+## 117                     66.46                          62.38
+## 118                        14                             31
+## 119        Calipatria Unified           Laguna Beach Unified
+## 120                   $78,700                     $1,000,000
+## 121                      1344                           1750
+## 122                       344                            387
+## 123                    90.30%                         96.10%
+## 124                    80.88%                         85.19%
+## 125                     19.21                          20.86
+## 126                     66.38                          62.31
+## 127                        15                             32
+## 128      Los Alamitos Unified        Borrego Springs Unified
+## 129                  $566,000                       $196,300
+## 130                      1629                           1351
+## 131                       391                            352
+## 132                    97.20%                         84.60%
+## 133                    85.38%                         64.29%
+## 134                     25.55                          14.25
+## 135                     65.71                          62.12
+## 136                        16                             33
+## 137          Glendora Unified             El Segundo Unified
+## 138                  $492,200                       $736,500
+## 139                      1594                           1601
+## 140                       370                            389
+## 141                    97.90%                         97.00%
+## 142                    87.14%                         79.41%
+## 143                     23.92                          23.55
+## 144                     65.64                          62.12
+## 145                        17                             34
+## 146             Poway Unified                 Bonita Unified
+## 147                  $550,100                       $433,100
+## 148                      1688                           1508
+## 149                       386                            368
+## 150                    95.20%                         95.20%
+## 151                    85.69%                         78.79%
+## 152                     26.66                          23.96
+## 153                     65.57                          61.94
+##                              X3                         X4
+## 1                            35                         52
+## 2           West Covina Unified           Redlands Unified
+## 3                      $375,900                   $286,500
+## 4                          1515                       1521
+## 5                           344                        354
+## 6                        96.50%                     91.20%
+## 7                        69.74%                     71.30%
+## 8                         18.90                      23.09
+## 9                         61.78                      60.27
+## 10                           36                         53
+## 11             Moorpark Unified Fullerton Joint Union High
+## 12                     $526,200                   $441,100
+## 13                         1647                       1566
+## 14                          360                        377
+## 15                       90.50%                     91.90%
+## 16                       87.83%                     75.93%
+## 17                        23.59                      27.15
+## 18                        61.50                      60.27
+## 19                           37                         54
+## 20             Glendale Unified          Holtville Unified
+## 21                     $597,400                   $135,400
+## 22                         1603                       1284
+## 23                          376                        340
+## 24                       91.90%                     89.00%
+## 25                       79.30%                     80.53%
+## 26                        22.89                      20.33
+## 27                        61.38                      60.20
+## 28                           38                         55
+## 29          Bear Valley Unified    Murrieta Valley Unified
+## 30                     $228,400                   $286,300
+## 31                         1586                       1486
+## 32                          349                        369
+## 33                       91.00%                     94.40%
+## 34                       54.38%                     71.01%
+## 35                        22.65                      26.45
+## 36                        61.34                      60.11
+## 37                           39                         56
+## 38  Valley Center-Pauma Unified William S. Hart Union High
+## 39                     $421,700                   $395,600
+## 40                         1506                       1611
+## 41                          359                        368
+## 42                       98.30%                     93.00%
+## 43                       71.58%                     66.83%
+## 44                        22.21                      24.97
+## 45                        61.32                      60.09
+## 46                           40                         57
+## 47              Morongo Unified              Coast Unified
+## 48                     $124,600                   $643,900
+## 49                         1474                       1481
+## 50                          356                        358
+## 51                       85.60%                     91.90%
+## 52                       56.89%                     69.44%
+## 53                        21.83                      15.55
+## 54                        61.29                      59.73
+## 55                           41                         58
+## 56           Capistrano Unified             Tustin Unified
+## 57                     $628,400                   $599,900
+## 58                         1612                       1603
+## 59                          382                        381
+## 60                       97.20%                     96.80%
+## 61                       82.49%                     76.83%
+## 62                        26.59                      27.97
+## 63                        61.27                      59.60
+## 64                           42                         59
+## 65          Simi Valley Unified         Brawley Union High
+## 66                     $433,000                   $149,700
+## 67                         1626                       1362
+## 68                          363                        344
+## 69                       84.70%                     93.00%
+## 70                       80.20%                     69.97%
+## 71                        21.28                      23.82
+## 72                        61.23                      59.60
+## 73                           43                         60
+## 74           Atascadero Unified         Central Union High
+## 75                     $388,800                   $148,500
+## 76                         1599                       1402
+## 77                          343                        342
+## 78                       96.40%                     86.00%
+## 79                       62.97%                     82.50%
+## 80                        21.55                      23.19
+## 81                        61.04                      59.58
+## 82                           44                         61
+## 83             Alhambra Unified           Carlsbad Unified
+## 84                     $421,000                   $593,100
+## 85                         1547                       1628
+## 86                          369                        375
+## 87                       91.40%                     94.80%
+## 88                       72.23%                     68.30%
+## 89                        25.00                      24.90
+## 90                        61.03                      59.48
+## 91                           45                         62
+## 92             Torrance Unified             Orange Unified
+## 93                     $614,100                   $539,200
+## 94                         1580                       1539
+## 95                          369                        373
+## 96                       95.70%                     93.90%
+## 97                       82.41%                     76.10%
+## 98                        24.01                      24.29
+## 99                        60.97                      59.43
+## 100                          46                         63
+## 101 Huntington Beach Union High           Alhambra Unified
+## 102                    $585,800                   $489,200
+## 103                        1584                       1547
+## 104                         373                        369
+## 105                      93.10%                     91.40%
+## 106                      81.02%                     72.23%
+## 107                       24.44                      25.00
+## 108                       60.87                      59.35
+## 109                          47                         64
+## 110          San Marcos Unified   Rim of the World Unified
+## 111                    $388,500                   $227,900
+## 112                        1507                       1548
+## 113                         370                        350
+## 114                      94.50%                     84.40%
+## 115                      74.11%                     67.80%
+## 116                       24.07                      23.89
+## 117                       60.86                      59.10
+## 118                          48                         65
+## 119        Las Virgenes Unified          Lucia Mar Unified
+## 120                    $809,300                   $442,300
+## 121                        1709                       1544
+## 122                         379                        354
+## 123                      95.40%                     90.80%
+## 124                      82.49%                     70.65%
+## 125                       21.48                      21.52
+## 126                       60.81                      58.92
+## 127                          49                         66
+## 128                Ojai Unified      Covina-Valley Unified
+## 129                    $516,100                   $371,400
+## 130                        1578                       1417
+## 131                         356                        351
+## 132                      93.20%                     95.70%
+## 133                      76.45%                     73.74%
+## 134                       20.86                      22.46
+## 135                       60.70                      58.80
+## 136                          50                         67
+## 137              Lompoc Unified             Upland Unified
+## 138                    $257,500                   $421,100
+## 139                        1476                       1522
+## 140                         354                        360
+## 141                      87.50%                     94.50%
+## 142                      68.57%                     65.89%
+## 143                       20.31                      24.06
+## 144                       60.44                      58.55
+## 145                          51                         68
+## 146       Beverly Hills Unified     Snowline Joint Unified
+## 147                  $1,000,000                   $166,600
+## 148                        1733                       1532
+## 149                         391                        341
+## 150                      95.00%                     87.00%
+## 151                      66.06%                     71.43%
+## 152                       16.72                      25.54
+## 153                       60.32                      58.49
+##                                 X5                           X6
+## 1                               69                           86
+## 2              San Gabriel Unified    Paso Robles Joint Unified
+## 3                         $574,500                     $366,600
+## 4                             1587                         1552
+## 5                              373                          345
+## 6                           89.00%                       87.50%
+## 7                           66.67%                       54.63%
+## 8                            23.48                        22.15
+## 9                            58.00                        54.27
+## 10                              70                           87
+## 11                 Burbank Unified  Santa Monica-Malibu Unified
+## 12                        $554,700                   $1,000,000
+## 13                            1568                         1616
+## 14                             366                          383
+## 15                          91.70%                       93.50%
+## 16                          71.41%                       73.07%
+## 17                           23.98                        20.83
+## 18                           57.52                        54.26
+## 19                              71                           88
+## 20                 Taft Union High          Culver City Unified
+## 21                        $119,700                     $609,200
+## 22                            1410                         1530
+## 23                             338                          369
+## 24                          96.90%                       86.60%
+## 25                          11.74%                       67.61%
+## 26                           15.18                        23.01
+## 27                           57.36                        53.99
+## 28                              72                           89
+## 29             Charter Oak Unified         Chino Valley Unified
+## 30                        $386,400                     $384,200
+## 31                            1401                         1478
+## 32                             357                          350
+## 33                          94.20%                       89.00%
+## 34                          79.84%                       75.24%
+## 35                           25.43                        25.82
+## 36                           57.29                        53.99
+## 37                              73                           90
+## 38                 Rowland Unified                Hemet Unified
+## 39                        $408,200                     $135,900
+## 40                            1488                         1443
+## 41                             362                          344
+## 42                          83.90%                       79.00%
+## 43                          74.09%                       63.38%
+## 44                           22.21                        24.48
+## 45                           56.98                        53.98
+## 46                              74                           91
+## 47            Garden Grove Unified               Downey Unified
+## 48                        $390,400                     $396,200
+## 49                            1450                         1418
+## 50                             364                          353
+## 51                          89.20%                       92.70%
+## 52                          69.87%                       64.64%
+## 53                           25.26                        24.54
+## 54                           56.27                        53.78
+## 55                              75                           92
+## 56               Tehachapi Unified        Lake Elsinore Unified
+## 57                        $217,200                     $223,300
+## 58                            1550                         1411
+## 59                             356                          344
+## 60                          88.00%                       88.80%
+## 61                          37.15%                       60.32%
+## 62                           23.40                        23.70
+## 63                           56.25                        53.60
+## 64                              76                           93
+## 65              Bellflower Unified      Delano Joint Union High
+## 66                        $369,300                     $138,400
+## 67                            1466                         1319
+## 68                             352                          361
+## 69                          93.20%                       92.90%
+## 70                          65.21%                       29.90%
+## 71                           24.37                        25.28
+## 72                           56.10                        53.58
+## 73                              77                           94
+## 74  Yucaipa-Calimesa Joint Unified    Norwalk-La Mirada Unified
+## 75                        $219,100                     $345,300
+## 76                            1456                         1399
+## 77                             333                          341
+## 78                          90.60%                       94.00%
+## 79                          67.34%                       60.04%
+## 80                           23.12                        23.42
+## 81                           56.03                        53.37
+## 82                              78                           95
+## 83               San Diego Unified Santa Maria Joint Union High
+## 84                        $420,400                     $274,100
+## 85                            1406                         1397
+## 86                             349                          335
+## 87                          87.90%                       84.00%
+## 88                          73.21%                       75.58%
+## 89                           19.03                        22.73
+## 90                           56.00                        53.15
+## 91                              79                           96
+## 92            Apple Valley Unified               Duarte Unified
+## 93                        $170,700                     $360,600
+## 94                            1493                         1385
+## 95                             341                          340
+## 96                          84.00%                       93.20%
+## 97                          63.76%                       61.13%
+## 98                           24.83                        22.58
+## 99                           55.90                        53.15
+## 100                             80                           97
+## 101             Anaheim Union High     Chaffey Joint Union High
+## 102                       $385,800                     $297,500
+## 103                           1486                         1426
+## 104                            363                          351
+## 105                         84.30%                       86.20%
+## 106                         73.41%                       70.63%
+## 107                          24.57                        26.20
+## 108                          55.68                        52.88
+## 109                             81                           98
+## 110           Escondido Union High             El Tejon Unified
+## 111                       $362,200                     $208,200
+## 112                           1511                         1489
+## 113                            357                          337
+## 114                         82.60%                       84.40%
+## 115                         67.69%                       48.33%
+## 116                          21.89                        24.18
+## 117                          55.25                        52.55
+## 118                             82                           99
+## 119                  Azusa Unified            Oceanside Unified
+## 120                       $304,500                     $327,700
+## 121                           1346                         1519
+## 122                            334                          347
+## 123                         93.00%                       87.00%
+## 124                         63.22%                       52.04%
+## 125                          20.24                        24.25
+## 126                          54.94                        52.41
+## 127                             83                          100
+## 128          Redondo Beach Unified         Baldwin Park Unified
+## 129                       $715,000                     $285,100
+## 130                           1592                         1342
+## 131                            371                          337
+## 132                         90.70%                       93.20%
+## 133                         77.44%                       57.01%
+## 134                          23.85                        24.16
+## 135                          54.90                        52.11
+## 136                             84                          101
+## 137     Hacienda la Puente Unified         Desert Sands Unified
+## 138                       $361,500                     $278,900
+## 139                           1412                         1393
+## 140                            345                          353
+## 141                         88.40%                       85.60%
+## 142                         69.40%                       62.44%
+## 143                          22.06                        25.09
+## 144                          54.74                        52.10
+## 145                             85                          102
+## 146            Ramona City Unified         Newport-Mesa Unified
+## 147                       $383,100                     $834,000
+## 148                           1551                         1513
+## 149                            354                          370
+## 150                         88.60%                       93.40%
+## 151                         69.14%                       74.13%
+## 152                          26.20                        22.20
+## 153                          54.67                        52.04
+##                           X7                          X8
+## 1                        103                         120
+## 2           Beaumont Unified           El Rancho Unified
+## 3                   $199,200                    $331,100
+## 4                       1414                        1311
+## 5                        339                         346
+## 6                     88.90%                      87.50%
+## 7                     61.62%                      57.20%
+## 8                      26.21                       23.77
+## 9                      51.66                       49.28
+## 10                       104                         121
+## 11       El Monte Union High           Val Verde Unified
+## 12                  $371,900                    $173,100
+## 13                      1377                        1306
+## 14                       344                         338
+## 15                    86.70%                      90.20%
+## 16                    61.08%                      47.58%
+## 17                     21.95                       25.17
+## 18                     51.66                       49.28
+## 19                       105                         122
+## 20             Vista Unified       Sweetwater Union High
+## 21                  $360,200                    $331,000
+## 22                      1510                        1411
+## 23                       351                         350
+## 24                    81.10%                      83.20%
+## 25                    59.04%                      58.58%
+## 26                     22.92                       23.69
+## 27                     51.57                       49.24
+## 28                       106                         123
+## 29      Corona-Norco Unified           Riverside Unified
+## 30                  $348,200                    $262,000
+## 31                      1462                        1428
+## 32                       352                         342
+## 33                    91.90%                      85.50%
+## 34                    51.30%                      52.36%
+## 35                     24.48                       25.39
+## 36                     51.42                       49.02
+## 37                       107                         124
+## 38      Fallbrook Union High           Perris Union High
+## 39                  $443,400                    $182,000
+## 40                      1491                        1361
+## 41                       346                         344
+## 42                    86.00%                      84.40%
+## 43                    66.77%                      59.24%
+## 44                     22.62                       28.18
+## 45                     51.41                       48.96
+## 46                       108                         125
+## 47      Grossmont Union High              Pomona Unified
+## 48                  $347,200                    $286,900
+## 49                      1464                        1292
+## 50                       355                         323
+## 51                    78.30%                      79.10%
+## 52                    73.62%                      65.53%
+## 53                     25.24                       16.35
+## 54                     51.37                       48.92
+## 55                       109                         126
+## 56       Carpinteria Unified            Calexico Unified
+## 57                  $654,000                    $153,600
+## 58                      1462                        1321
+## 59                       346                         325
+## 60                    91.60%                      75.40%
+## 61                    72.25%                      82.76%
+## 62                     22.19                       25.85
+## 63                     50.70                       48.60
+## 64                       110                         127
+## 65      Palm Springs Unified         San Jacinto Unified
+## 66                  $194,100                    $126,200
+## 67                      1328                        1300
+## 68                       341                         338
+## 69                    87.20%                      81.60%
+## 70                    58.57%                      55.39%
+## 71                     25.32                       24.85
+## 72                     50.55                       48.54
+## 73                       111                         128
+## 74          Hesperia Unified      Lucerne Valley Unified
+## 75                  $152,200                    $101,100
+## 76                      1343                        1342
+## 77                       332                         349
+## 78                    83.20%                      68.40%
+## 79                    64.66%                      43.48%
+## 80                     25.65                       19.19
+## 81                     50.11                       48.50
+## 82                       112                         129
+## 83  Victor Valley Union High             Barstow Unified
+## 84                  $135,200                    $104,100
+## 85                      1343                        1299
+## 86                       339                         328
+## 87                    78.50%                      73.10%
+## 88                    62.79%                      65.58%
+## 89                     24.68                       22.63
+## 90                     50.07                       48.32
+## 91                       113                         130
+## 92           Fontana Unified         Whittier Union High
+## 93                  $208,700                    $362,400
+## 94                      1311                        1350
+## 95                       342                         352
+## 96                    86.40%                      87.30%
+## 97                    55.52%                      62.37%
+## 98                     23.69                       27.30
+## 99                     50.06                       48.15
+## 100                      114                         131
+## 101         Monrovia Unified            Wasco Union High
+## 102                 $493,400                    $132,000
+## 103                     1319                        1374
+## 104                      362                         344
+## 105                   86.80%                      83.50%
+## 106                   67.82%                      26.43%
+## 107                    22.23                       24.44
+## 108                    49.88                       47.97
+## 109                      115                         132
+## 110         Fillmore Unified              Rialto Unified
+## 111                 $305,600                    $168,900
+## 112                     1449                        1316
+## 113                      322                         332
+## 114                   87.20%                      80.00%
+## 115                   70.00%                      60.07%
+## 116                    24.44                       24.05
+## 117                    49.66                       47.84
+## 118                      116                         133
+## 119       Long Beach Unified           Oxnard Union High
+## 120                 $421,000                    $371,000
+## 121                     1427                        1426
+## 122                      344                         339
+## 123                   80.80%                      77.50%
+## 124                   78.86%                      74.82%
+## 125                    25.07                       24.86
+## 126                    49.45                       46.99
+## 127                      117                         134
+## 128          Bassett Unified     Mountain Empire Unified
+## 129                 $312,500                    $242,700
+## 130                     1324                        1365
+## 131                      336                         330
+## 132                   91.30%                      70.00%
+## 133                   49.84%                      53.06%
+## 134                    22.79                       16.54
+## 135                    49.42                       46.79
+## 136                      118                         135
+## 137       Palo Verde Unified San Bernardino City Unified
+## 138                 $124,100                    $158,300
+## 139                     1342                        1318
+## 140                      316                         327
+## 141                   81.70%                      75.50%
+## 142                   68.89%                      57.74%
+## 143                    24.28                       21.90
+## 144                    49.35                       46.70
+## 145                      119                         136
+## 146        Santa Ana Unified           Paramount Unified
+## 147                 $342,300                    $281,400
+## 148                     1359                        1284
+## 149                      335                         336
+## 150                   85.90%                      80.80%
+## 151                   66.07%                      65.23%
+## 152                    23.40                       23.61
+## 153                    49.30                       46.69
+##                              X9
+## 1                           137
+## 2        Santa Paula Union High
+## 3                      $324,200
+## 4                          1308
+## 5                           332
+## 6                        85.10%
+## 7                        76.58%
+## 8                         26.89
+## 9                         46.50
+## 10                          138
+## 11        Southern Kern Unified
+## 12                     $121,100
+## 13                         1401
+## 14                          321
+## 15                       77.60%
+## 16                       52.43%
+## 17                        24.67
+## 18                        46.21
+## 19                          139
+## 20         Colton Joint Unified
+## 21                     $193,900
+## 22                         1335
+## 23                          322
+## 24                       77.80%
+## 25                       57.51%
+## 26                        21.20
+## 27                        46.21
+## 28                          140
+## 29           Montebello Unified
+## 30                     $365,300
+## 31                         1336
+## 32                          332
+## 33                       87.30%
+## 34                       58.83%
+## 35                        25.24
+## 36                        46.08
+## 37                          141
+## 38            McFarland Unified
+## 39                     $115,800
+## 40                         1199
+## 41                          331
+## 42                       83.30%
+## 43                       26.88%
+## 44                        18.68
+## 45                        45.96
+## 46                          142
+## 47        Moreno Valley Unified
+## 48                     $179,300
+## 49                         1327
+## 50                          326
+## 51                       81.50%
+## 52                       51.29%
+## 53                        23.44
+## 54                        45.82
+## 55                          143
+## 56               Jurupa Unified
+## 57                     $216,600
+## 58                         1353
+## 59                          331
+## 60                       82.00%
+## 61                       41.76%
+## 62                        23.06
+## 63                        45.41
+## 64                          144
+## 65               Alvord Unified
+## 66                     $226,400
+## 67                         1366
+## 68                          344
+## 69                       80.20%
+## 70                       46.26%
+## 71                        25.83
+## 72                        45.29
+## 73                          145
+## 74     Coachella Valley Unified
+## 75                     $139,200
+## 76                         1209
+## 77                          325
+## 78                       79.10%
+## 79                       52.48%
+## 80                        21.69
+## 81                        44.55
+## 82                          146
+## 83              Banning Unified
+## 84                     $158,700
+## 85                         1282
+## 86                          314
+## 87                       83.70%
+## 88                       53.33%
+## 89                        26.77
+## 90                        43.39
+## 91                          147
+## 92     Acton-Agua Dulce Unified
+## 93                     $451,600
+## 94                         1395
+## 95                          335
+## 96                       86.60%
+## 97                       49.61%
+## 98                        23.36
+## 99                        42.56
+## 100                         148
+## 101            Pasadena Unified
+## 102                    $600,600
+## 103                        1338
+## 104                         330
+## 105                      82.80%
+## 106                      66.96%
+## 107                       20.44
+## 108                       42.27
+## 109                         149
+## 110              Mojave Unified
+## 111                     $88,500
+## 112                        1280
+## 113                         318
+## 114                      74.90%
+## 115                      37.59%
+## 116                       23.61
+## 117                       41.06
+## 118                         150
+## 119           Inglewood Unified
+## 120                    $352,400
+## 121                        1210
+## 122                         318
+## 123                      80.60%
+## 124                      61.70%
+## 125                       26.07
+## 126                       36.66
+## 127                         151
+## 128         Los Angeles Unified
+## 129                    $417,000
+## 130                        1254
+## 131                         330
+## 132                      68.10%
+## 133                      62.73%
+## 134                       20.68
+## 135                       36.40
+## 136                         152
+## 137 Centinela Valley Union High
+## 138                    $386,300
+## 139                        1247
+## 140                         317
+## 141                      68.20%
+## 142                      68.72%
+## 143                       25.63
+## 144                       33.67
+## 145                         153
+## 146             Compton Unified
+## 147                    $238,200
+## 148                        1169
+## 149                         308
+## 150                      65.00%
+## 151                      60.62%
+## 152                       23.25
+## 153                       32.55</code></pre>
+<p>Another option is the <a href="https://www.analyticsvidhya.com/blog/2017/03/beginners-guide-on-web-scraping-in-r-using-rvest-with-hands-on-knowledge/">rvest</a> package.</p>
+<p>It will help if you install the <a href="https://selectorgadget.com/">selector gadget</a>, a Chrome-approved browser extension.</p>
+<pre class="r"><code>#Loading the rvest package
+library(rvest)
+
+#Specifying the url for desired website to be scrapped
+imdb_url &lt;- &quot;http://www.imdb.com/search/title?count=100&amp;release_date=2016,2016&amp;title_type=feature&quot;
+
+#Reading the HTML code from the website
+webpage &lt;- read_html(imdb_url)</code></pre>
+<pre class="r"><code>#Using CSS selectors to scrap the rankings section
+rank_data_html &lt;- html_nodes(webpage, &#39;.text-primary&#39;)
+
+#Converting the ranking data to text
+rank_data &lt;- html_text(rank_data_html)
+
+#Let&#39;s have a look at the rankings
+head(rank_data)</code></pre>
+<pre><code>## [1] &quot;1.&quot; &quot;2.&quot; &quot;3.&quot; &quot;4.&quot; &quot;5.&quot; &quot;6.&quot;</code></pre>
+<pre class="r"><code>#Data-Preprocessing: Converting rankings to numerical
+rank_data &lt;- as.numeric(rank_data)</code></pre>
+
+  </div>
+
+  <footer>
+    <ul class="stats">
+  <li class="categories">
+    <ul>
+        
+            
+            
+        
+    </ul>
+  </li>
+  <li class="tags">
+    <ul>
+        
+            
+            
+        
+    </ul>
+  </li>
+</ul>
+
+  </footer>
+
+</article>
+
+    <article class="post">
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </article>
+
+
+<ul class="actions pagination">
+    
+        <li><a href="/post/average-performance-vs-who-does-the-school-work-for/"
+                class="button big previous">Average performance vs who does the school work for</a></li>
+    
+
+    
+        <li><a href="/post/questions-to-ask-at-your-interview/"
+                class="button big next">Questions to ask at your interview</a></li>
+    
+</ul>
+
+
+    </div>
+    
+<section id="sidebar">
+
+  
+  <section id="intro">
+    
+    
+      
+        <a href='/' class="logo"><img src="/img/main/logo.jpg" alt="Hugo Future Imperfect" /></a>
+      
+    
+    
+      <header>
+        <h2>Joseph T Powers</h2>
+        <p>Misadventures in data science and other crafts.</p>
+      </header>
+    
+    
+      <ul class="icons">
+        
+          
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+
+
+        
+        
+  <li><a href="//github.com/joepowers16" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//flickr.com/photos/example" target="_blank" title="Flickr" class="fa fa-flickr"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//linkedin.com/in/example" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+  <li><a href="//linkedin.com/company/examplebusiness" target="_blank" title="LinkedIn Company" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+  <li><a href="//facebook.com/example" target="_blank" title="Facebook" class="fa fa-facebook"></a></li>
+
+
+
+
+
+  <li><a href="//reddit.com/user/example" target="_blank" title="Reddit" class="fa fa-reddit"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//instagram.com/example" target="_blank" title="Instagram" class="fa fa-instagram"></a></li>
+
+
+
+
+
+  <li><a href="//twitter.com/example" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+
+
+
+  <li><a href="//pinterest.com/example" target="_blank" title="Pinterest" class="fa fa-pinterest-p"></a></li>
+
+
+
+  <li><a href="//telegram.me/example" target="_blank" title="telegram" class="fa fa-telegram"></a></li>
+
+
+
+
+
+
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+
+
+
+  <li><a href="mailto:example" title="Email" class="fa fa-envelope"></a></li>
+
+
+      </ul>
+    
+  </section>
+
+  
+  <section class="recent-posts">
+    <div class="mini-posts">
+      <header>
+        <h3>Recent Posts</h3>
+      </header>
+      <div class="posts-container">
+        
+
+        
+          
+        
+
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/map2-vs-pmap/">map2 vs pmap</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-13'>
+                July 13, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/need-for-entertainment/">Need for entertainment</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-12'>
+                July 12, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/mutating-with-joins/">mutating with joins</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-12'>
+                July 12, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/list-columns-can-purrr-and-loudly/">Herding Cats with List columns</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-11'>
+                July 11, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/purrring/">purrring</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-11'>
+                July 11, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+      </div>
+
+      
+        <a href=
+          
+            /blog/
+          
+        class="button">View more posts</a>
+      
+    </div>
+  </section>
+
+  
+  
+  
+  
+  
+    <section id="categories">
+      <header>
+        <h3>
+          <a href="/categories/">Categories</a>
+        </h3>
+      </header>
+        
+          
+        
+
+        
+        <p>
+          <article>
+            <header>
+              
+                Uncategorized
+                <span style="float:right;">4</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/hugo/">Hugo</a>
+                <span style="float:right;">2</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/go/">Go</a>
+                <span style="float:right;">1</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/r/">R</a>
+                <span style="float:right;">1</span>
+              
+            </header>
+          </article>
+        </p>
+        
+    </section>
+  
+  
+
+  
+  
+    <section id="mini-bio">
+      <h3>About</h3>
+      <p>I am a data science in People Analytics at Genentech. In my free time I am an avid furniture maker and cook.</p>
+      <a href="/about/" class="button">Learn More</a>
+    </section>
+  
+
+  
+  <section id="footer">
+    
+      <ul class="icons">
+        
+          
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+
+
+        
+        
+  <li><a href="//github.com/joepowers16" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//flickr.com/photos/example" target="_blank" title="Flickr" class="fa fa-flickr"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//linkedin.com/in/example" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+  <li><a href="//linkedin.com/company/examplebusiness" target="_blank" title="LinkedIn Company" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+  <li><a href="//facebook.com/example" target="_blank" title="Facebook" class="fa fa-facebook"></a></li>
+
+
+
+
+
+  <li><a href="//reddit.com/user/example" target="_blank" title="Reddit" class="fa fa-reddit"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//instagram.com/example" target="_blank" title="Instagram" class="fa fa-instagram"></a></li>
+
+
+
+
+
+  <li><a href="//twitter.com/example" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+
+
+
+  <li><a href="//pinterest.com/example" target="_blank" title="Pinterest" class="fa fa-pinterest-p"></a></li>
+
+
+
+  <li><a href="//telegram.me/example" target="_blank" title="telegram" class="fa fa-telegram"></a></li>
+
+
+
+
+
+
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+
+
+
+  <li><a href="mailto:example" title="Email" class="fa fa-envelope"></a></li>
+
+
+      </ul>
+    
+    <p class="copyright">
+      
+        &copy; 2018
+        
+          Data Sciencing, Woodworking, and Cooking
+        
+      .
+      Powered by <a href="//gohugo.io" target="_blank">Hugo</a>
+    </p>
+  </section>
+</section>
+
+    </div>
+    <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+    
+
+    
+      
+    
+
+    
+      
+      
+      
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+        
+        
+        
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/css.min.js"></script>
+        <script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+      
+    
+    
+    
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.js"></script>
+      <script src="/js/util.js"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/backToTop.js"></script>
+    
+
+    
+      
+        
+      
+    
+
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+      <script src="//yihui.name/js/math-code.js"></script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+  </body>
+</html>
+

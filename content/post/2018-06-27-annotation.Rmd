@@ -1,0 +1,26 @@
+---
+title: Annotation
+author: Joe Powers
+date: '2018-06-27'
+slug: annotation
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+mtcars %>% 
+  ggplot(aes(x = wt, y = mpg)) +
+  geom_point() + 
+  annotate("label", label = "Yo!!!", x = 4, y = 25, hjust = 1, color = "red") + 
+  annotate("text", label = "Yo!!!", x = 4, y = 30, hjust = 1, color = "red")
+```
+

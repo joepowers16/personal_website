@@ -1,0 +1,280 @@
+---
+title: Statistical Power in Workplace Experiments
+author: Joe Powers
+date: '2018-06-27'
+slug: statistical-power-in-workplace-experiments
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+Let's do a little primer on probability. If I flip a coin, what is the probability I'll get heads? 50%, let's make it even easier and say 1 in 2. If I roll a die, what is the probability I'll roll a 2? 1 in 6. 
+
+Let;s take an example of a noteworthy but subtle effect size. If women feel 1/3 of a point less included than men on a 5-pt scale with an SD of 1, what is the probability I will detect a significant difference with 30 people per cell? 1 in 5. Let that sink in. On 4 out of 5 surveys we would return with the wrong answer, detecting no significant difference or detecting a difference in the wrong direction.
+
+```{r}
+library(tidyverse)
+library(genepa)
+```
+
+So you've been asked by a business partner about sufficient sample size in an upcoming experiment. At baseline, male and female employees rated their feelings of inclusion on a 5-pt scale as 3.9 and 3.2 respectively. This is an effect size of .7 and the SD is 1.5.
+
+This pilot had statistical power of just 25%. 
+
+```{r}
+set.seed(53)
+
+clip_tails <- function(x) {
+  case_when(
+    x < 1 ~ 1,
+    x > 5 ~ 5,
+    TRUE ~ x
+  )
+}
+
+ds_temp <- 
+  matrix(ncol = 2, nrow = 30) %>% 
+  data.frame() %>% 
+  setNames(c("male", "female")) %>% 
+  mutate(
+    male   = rnorm(n = 30, mean = 4.2, sd = 1.5) %>% clip_tails(),
+    female = rnorm(n = 30, mean = 3.7, sd = 1.5) %>% clip_tails()
+  ) %>% 
+  gather(key = gender, value = inclusion)
+```
+
+```{r}
+ds_temp %>% 
+  t.test(inclusion ~ gender, .) %>% 
+  broom::glance()
+
+ds_sd <- 
+  ds_temp %>% 
+  group_by(gender) %>% 
+  summarise(sd = sd(inclusion))
+
+SD_pooled <- 
+  sqrt(
+  (ds_sd$sd[1]^2 + ds_sd$sd[2]^2) / 2
+)
+```
+
+```{r}
+power.t.test(n = 30, delta = -0.6523005, sd = SD_pooled)
+```
+
+```{r}
+power.t.test(power = .8, delta = -0.6523005, sd = SD_pooled)
+```
+
+52 per group
+
+```{r}
+power.t.test(power = .8, delta = .3, sd = SD_pooled)
+```
+
+243 per group
+
+## If SD is 1:
+```{r}
+power.t.test(power = .8, delta = .3, sd = 1)
+```
+
+# Can you simulate this power?
+```{r}
+set.seed(53)
+
+clip_tails <- function(x) {
+  case_when(
+    x < 1 ~ 1,
+    x > 5 ~ 5,
+    TRUE ~ x
+  )
+}
+
+ds_temp <- 
+  matrix(ncol = 2, nrow = 7E3) %>% 
+  data.frame() %>% 
+  setNames(c("men", "women")) %>% 
+  mutate(
+    men   = rnorm(n = 7E3, mean = 4.0, sd = 1.5) %>% clip_tails(),
+    women = rnorm(n = 7E3, mean = 3.7, sd = 1.5) %>% clip_tails()
+  ) %>% 
+  gather(key = gender, value = inclusion)
+```
+
+```{r}
+power.t.test(delta = .3, sd = 1, n = 30)
+```
+
+```{r}
+t_rand <- function(){
+  ds_temp %>% 
+  group_by(gender) %>% 
+  sample_n(30) %>% 
+  t.test(inclusion ~ gender, .) %>% 
+  broom::glance() %>% 
+  select(estimate, p.value)
+}
+```
+
+```{r}
+ds_rep <- 
+  replicate(10000, t_rand(), simplify = "data.frame") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  unnest()
+```
+
+```{r}
+ds_rep %>% 
+  summarise(estiamte = mean(estimate))
+```
+
+```{r fig.height=6, fig.width=7}
+ds_rep %>% 
+  ggplot(aes(y = p.value, x = estimate)) +
+  geom_hline(yintercept = .05, color = "red") + 
+  # geom_vline(xintercept = 0, color = "black") +
+  geom_vline(xintercept = .3, color = gblue) +
+  annotate("label", x = .6, y = .6, label = "True Difference is 0.3") + 
+  scale_y_continuous(
+    breaks = c(.05, seq(.25, 1, by = .25)),
+    limits = c(0,1)
+  ) +
+  scale_x_continuous(
+    breaks = seq(-.6, 1.2, by = .3),
+    limits = c(-.6, 1.2)
+  ) +
+  geom_point(shape = 21, color = "white", fill = gblue) + 
+  labs(
+    y = "Observed p-value", 
+    x = "Observed difference",
+    title = breakup("Running 1,000 simulations of studies with 21% power, we see significant effects in the right direction only 21% of the time", 40)) + 
+ theme_genepa()
+```
+
+```{r fig.height=6, fig.width=7}
+label_round <- function(x){
+  round(x, 1)
+  }
+
+ds_rep %>% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram(binwidth = .05, fill = gblue) +
+  geom_vline(xintercept = .3, color = gred, size = 1) +
+  annotate("label", x = .3, y = 100, label = "True Difference is 0.3") + 
+  scale_x_continuous(
+    breaks = seq(-0.9, 1.2, by = .3),
+    labels = label_round,
+    limits = c(-0.9, 1.3)
+    ) + 
+  labs(
+    x = "Observed difference",
+    title = breakup("Running 10,000 simulations we see a normal-ish distribution of differences centered around the true difference", 40)) + 
+ theme_genepa()
+```
+
+Areas to explore further: 
+__ How to compute power when data are not normally distributed (i.e., survey data which are bounded by response limits of 1 & 7). 
+__ Also note how the clipping of the data on the right (e.g, values about 5 were clipped) lead to a biased estimate of .22 in a simulation of 10,000 t.tests. 
+
+# __Simulate t-test with male and female heights, a 2 SD difference
+data from [Columbia](www.stat.columbia.edu/~martin/W1111/Review2.pdf)
+```{r}
+MN_m <- 69.1
+SD_m <- 2.9
+MN_f <- 63.7
+SD_f <- 2.7
+
+SD_pooled <- sqrt(
+  (SD_m^2 + SD_f^2) / 2
+)
+
+(MN_m - MN_f) / SD_pooled # = 1.9 SDs
+
+ds_ht <- 
+  matrix(ncol = 2, nrow = 1E3) %>% 
+  data.frame() %>% 
+  setNames(c("men", "women")) %>% 
+  mutate(
+    men   = rnorm(n = 1000, mean = MN_m, sd = SD_m),
+    women = rnorm(n = 1000, mean = MN_f, sd = SD_f)
+  ) %>% 
+  gather(key = gender, value = inches)
+
+power.t.test(power = .8, delta = MN_m - MN_f, sd = SD_pooled)
+```
+
+For height you only need 5 people per cell to achieve 80% power. 
+
+```{r}
+t_rand <- function(){
+  ds_ht %>% 
+  group_by(gender) %>% 
+  sample_n(5) %>% 
+  t.test(inches ~ gender, .) %>% 
+  broom::glance() %>% 
+  select(estimate, p.value)
+}
+```
+
+```{r}
+ds_rep <- 
+  replicate(10000, t_rand(), simplify = "data.frame") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  as_tibble() %>% 
+  unnest()
+```
+
+```{r}
+ds_rep %>% 
+  summarise(estimate = mean(estimate))
+```
+
+```{r fig.height=6, fig.width=7}
+label_diff_in <- paste("True Difference is", round(MN_m - MN_f, 1), "inches")
+
+ds_rep %>% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram(binwidth = .5, fill = gblue) +
+  geom_vline(xintercept = (MN_m - MN_f), color = gred, size = 1) +
+  annotate("label", x = (MN_m - MN_f), y = 100, label = label_diff_in) + 
+  # scale_x_continuous(
+  #   breaks = seq(-0.9, 1.2, by = .3),
+  #   labels = label_round,
+  #   limits = c(-0.9, 1.3)
+  #   ) + 
+  # labs(
+  #   x = "Observed difference",
+  #   title = breakup("Running 10,000 simulations we see a normal-ish distribution of differences centered around the true difference", 40)) + 
+ theme_genepa()
+```
+
+```{r fig.height=6, fig.width=7}
+ds_rep %>% 
+  ggplot(aes(y = p.value, x = estimate)) +
+  scale_y_continuous(
+    breaks = c(.05, seq(.25, 1, by = .25)),
+    limits = c(0,1)
+  ) +
+  scale_x_continuous(
+    breaks = seq(-2, 12, by = 2),
+    limits = c(-2, 12)
+  ) +
+  geom_point(shape = 21, color = "white", fill = gblue) + 
+  geom_hline(yintercept = .05, color = "red") + 
+  geom_vline(xintercept = MN_m - MN_f, color = gblue) +
+  annotate("label", x = MN_m - MN_f, y = .6, label = label_diff_in, hjust = -.1) + 
+  labs(
+    y = "Observed p-value", 
+    x = "Observed difference",
+    title = breakup("10,000 simulations of studies with 80% power", 40)) + 
+ theme_genepa()
+```

@@ -1,0 +1,171 @@
+---
+title: Visualizing (many) model predictions
+author: Joe Powers
+date: '2018-06-21'
+slug: visualizing-many-model-predictions
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+
+
+<pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(modelr)</code></pre>
+<pre class="r"><code>ds_mt &lt;- mtcars</code></pre>
+<pre class="r"><code>p_mpg &lt;- 
+  ds_mt %&gt;% 
+  ggplot(aes(x = wt, y = mpg)) + 
+  geom_point()
+
+p_mpg</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>m1 &lt;- lm(mpg ~ wt, ds_mt)
+m2 &lt;- lm(mpg ~ wt + I(wt^2), ds_mt)</code></pre>
+<pre class="r"><code>ds_mt %&lt;&gt;% 
+    add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% 
+  add_predictions(m2, var = &quot;m2_pred&quot;)</code></pre>
+<div id="show-a-predicted-model-using-raw-data-to-demo-need-for-a-full-dataset." class="section level2">
+<h2>Show a predicted model using raw data to demo need for a full dataset.</h2>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mt, 
+    aes(x = wt, y = m2_pred), 
+    color = &quot;red&quot;
+  )</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="show-how-to-make-a-full-dataset" class="section level2">
+<h2>show how to make a full dataset</h2>
+<p>Creates 10 values for each var that are equally spaced along its range. 10 x 10 = 100 rows</p>
+<pre class="r"><code>ds_mtgrid &lt;- 
+  data_grid(
+    ds_mt, 
+    wt = seq_range(wt, 500), 
+    mpg = seq_range(mpg, 100)
+  )</code></pre>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+    add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% 
+  add_predictions(m2, var = &quot;m2_pred&quot;)</code></pre>
+<pre class="r"><code>p_mpg + 
+    geom_point(
+      data = ds_mtgrid, 
+      aes(x = wt, y = m1_pred), 
+      size = .1, 
+      color = &quot;blue&quot;
+    ) + 
+    geom_point(
+      data = ds_mtgrid,
+      aes(x = wt, y = m2_pred), 
+      size = .1, 
+      color = &quot;red&quot;
+    )</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/2%20plots-1.png" width="672" /></p>
+<p>The above plot makes is too cluttered, so let’s gather the predicted values into one column so we can facet the data into seperate plots.</p>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+  gather(m1_pred, m2_pred, key = model, value = mpg_pred) </code></pre>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mtgrid, 
+    aes(x = wt, y = mpg_pred), 
+    size = .1, 
+    color = &quot;red&quot;
+  ) + 
+  facet_grid(~model)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/facetted_plot-1.png" width="960" /></p>
+</div>
+<div id="gather_predictions" class="section level1">
+<h1>gather_predictions()</h1>
+<p>Suppose we had even more models we wanted to test.</p>
+<pre class="r"><code>m1 &lt;- lm(mpg ~ wt, data = ds_mt)
+m2 &lt;- lm(mpg ~ wt + I(wt^2), data = ds_mt)
+m3 &lt;- lm(mpg ~ wt + I(wt^2) + I(wt^3), data = ds_mt)
+m4 &lt;- lm(mpg ~ wt + I(wt^2) + I(wt^3) + I(wt^4), data = ds_mt)</code></pre>
+<p>We can use <code>gather_predictions()</code> to add the predicted outcomes to our dataset.</p>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+  gather_predictions(m1, m2, m3, m4, .pred = &quot;mpg_pred&quot;)</code></pre>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mtgrid, 
+    aes(x = wt, y = mpg_pred), 
+    size = .1, 
+    color = &quot;red&quot;
+  ) + 
+  facet_wrap(~model)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/many%20plots-1.png" width="672" /></p>
+</div>
+<div id="on-return-try-to-pull-r.squared-from-many-models" class="section level1">
+<h1>On return try to pull R.squared from many models</h1>
+<p>Many models has two basic approaches. You can apply the same model to many subsets, or you can apply multiple models to the same data.</p>
+<div id="applying-the-same-model-to-many-subsets" class="section level2">
+<h2>Applying the same model to many subsets</h2>
+<pre class="r"><code># Create a nested dataframe
+ds_by_cyl &lt;- 
+  ds_mt %&gt;% 
+  group_by(cyl) %&gt;% 
+  nest()
+
+# Create a model to apply as a function within map()
+my_model &lt;- function(mydata){
+  lm(mpg ~ wt, data = mydata)
+}
+
+# create a model for each dataframe in your list column called &quot;data&quot;
+ds_by_cyl %&lt;&gt;% 
+  mutate(model = map(data, my_model))
+
+# Exract key model stats using `broom::glance()`
+ds_by_cyl %&lt;&gt;% 
+  mutate(model_stats = map(model, broom::glance))
+
+# Unnest the `model_stats` list column so you can plot relevant stat from each model
+ds_by_cyl %&gt;% 
+  unnest(model_stats) %&gt;% 
+  ggplot(aes(x = cyl, y = r.squared)) + 
+  geom_line() + 
+  geom_point(color = &quot;red&quot;) +
+  scale_x_continuous(breaks = seq(4,8, by = 2)) + 
+  labs(title = &quot;Weight explain more odf the variance in mpg for smaller engine cars&quot;)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/same%20model%20to%20subsets%20of%20one%20df-1.png" width="672" /></p>
+<p>Can you save the df in each list-col cell from Diamonds Part 4: <a href="https://github.com/dcl-2017-04/tasks/blob/master/c27-diamonds-4/solution.md" class="uri">https://github.com/dcl-2017-04/tasks/blob/master/c27-diamonds-4/solution.md</a></p>
+<pre class="r"><code>ds_mt %&lt;&gt;% rownames_to_column(&quot;vehicle&quot;) 
+
+model_stats &lt;- function(formula, mydata = ds_mt) {
+  v &lt;- lm(formula, data = mydata)
+  
+  tibble(
+    formula = formula,
+    n_coefs = coef(v) %&gt;% length(),
+    r_squared = broom::glance(v)$r.squared
+  )
+}
+
+many_models &lt;- 
+  list(
+    &quot;mpg ~ wt&quot;,
+    &quot;mpg ~ wt + disp&quot;,
+    &quot;mpg ~ wt + disp + am&quot;,
+    &quot;mpg ~ wt + disp + vs&quot;,
+    &quot;mpg ~ wt + disp + am + vs&quot;
+  ) 
+
+ds_models &lt;- map_df(many_models, model_stats)
+
+ds_models %&gt;% 
+  ggplot(aes(x = n_coefs, y = r_squared, label = formula)) + 
+  geom_line() + 
+  geom_point() + 
+  ggrepel::geom_text_repel(point.padding = 1) + 
+  coord_cartesian(xlim = c(1.75, 5.5)) + 
+  labs(title = &quot;AM adds little to model&quot;)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/many%20models%20to%20one%20df-1.png" width="672" /></p>
+</div>
+</div>
+<div id="can-you-store-all-those-plots-in-one-tibble" class="section level1">
+<h1>Can you store all those plots in one tibble?</h1>
+</div>

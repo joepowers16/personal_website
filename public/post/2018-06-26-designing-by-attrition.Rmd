@@ -1,0 +1,15 @@
+---
+title: Designing by attrition
+author: Joe Powers
+date: '2018-06-26'
+slug: designing-by-attrition
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+I used to think of planning as foresight. Now I do so much new work that it is often best to jump right in and start working. And templates and structures are designed by attrition. Use ND example of paving the dead grass in an open quad. At first just see what elements of your code you are copying and pasting. Do it three times: Make a function. Same goes for templates. You probably update the RStudio template. Well after your made the same updates three times. Stop and make your own tamplate. I use a few one for EDA in particular where I am always on the fly creating new notebooks. 

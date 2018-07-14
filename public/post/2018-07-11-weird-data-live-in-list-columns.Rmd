@@ -1,0 +1,173 @@
+---
+title: Herding Cats with List columns
+author: Joe Powers
+date: '2018-07-11'
+slug: list-columns-can-purrr-and-loudly
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
+Notice the vector class for the second column in this tibble. 
+```{r list col example, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+mpg %>% 
+  group_by(cyl) %>% 
+  nest() %>% 
+  arrange(cyl)
+```
+
+It's labelled `<list>`, indicating that it is a "list column". When I first learned about **list columns** I thought, "Neat, but when will I ever use these?" In the year since they've become my life-line for iterative programming challenges. They've become a life line because they are so versatile in what they can store. Virtually any data object can be saved as a list. So list columns can store models, data frames, plots, etc. And the reason this versatility is so useful is that it keeps objects aligned, which is essential for iterative programming. 
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(magrittr)
+library(modelr) 
+```
+
+You're probably already familiar with the numeric and character vectors that populate most dataframes. 
+```{r}
+mpg
+```
+
+List columns are a special kind of vector. They're like the suitcase from *Incredible Beasts and Where to Find Them*: They look small but whole worlds can exist inside. While atomic vectors (e.g., double and character vectors) store individual numeric or text values, list columns can store weird data types like models, functions, plots, or even dataframes within dataframes or tibbles within tibbles. In the example below I use `group_by()` and `nest()` to create a list column, which by default will be named `data`.
+```{r}
+ds_mpg <- 
+  mpg %>% 
+    group_by(cyl) %>% 
+    nest() %>% 
+    arrange(cyl)
+
+ds_mpg
+```
+
+All the data from rows with 4 cylinders has been saved in the first element of the list column. Let's view it. 
+```{r}
+ds_mpg$data[[1]]
+```
+
+
+I now have a list column whose values are datasets. So what? Well this arrangement leaves me nicely positioned to perform iterative data analysis. For instance, I can apply a custom function to each dataframe in the list column, and then save the model outputs in ... another list column, and everything remains aligned. 
+```{r}
+# Create a custom function for modeling the data
+foo_model <- function(data){
+  lm(hwy ~ displ, data)
+}
+
+# iteratively apply that function to each dataframe in the list column called data
+ds_mpg %<>% 
+  mutate(model = map(.x = data, .f = foo_model))
+
+ds_mpg
+```
+
+Now that I have the models saved in their own list column I can work iteratively with them as well. What if I want to plot the predicted values of each model? Well I can do so and save the plots in a list column. And everything remains aligned and organized. 
+
+To plot the model outputs I'll want to create a data grid of all possible values and then use ggplot() to create a unique plot for each model and dataframe.  
+```{r warning=FALSE}
+# First let's add another list column for the data grids
+ds_mpg %<>%
+  mutate(
+    grid = map(
+      .x = data, # the variable you are mapping to ...
+      .f = data_grid, # ... the function
+        # next come arguments for the function 
+        displ = seq_range(displ, 500)
+    )
+  ) 
+
+# then let's add predicted values
+ds_mpg %<>% 
+  mutate(pred = map2(grid, model, add_predictions, var = "hwy_pred"))
+
+ds_mpg
+```
+
+Finally let's visualize all of it and save the results in ... a list column.
+```{r}
+range(mpg$displ)
+range(mpg$hwy)
+
+gg_foo <- function(data_orig = data, data_pred = pred, cyl = cyl){
+  # generate plot title
+  plot_title <- paste(cyl, "cylinder cars") # DEBUG
+    
+  # plot raw data
+  data_orig %>% 
+    ggplot(aes(x = displ, y = hwy)) + 
+    geom_point(color = "blue") +
+    # plot model predicted values
+    geom_point(
+      data = data_pred, 
+      aes(x = displ, y = hwy_pred), 
+      color = "red",
+      size = .5,
+      shape = 23
+    ) + 
+    scale_x_continuous(
+      breaks = seq(1, 7, by = 1),
+      limits = c(1, 7)
+    ) + 
+    scale_y_continuous(
+      breaks = seq(10, 50, by = 10),
+      limits = c(10, 50)
+    ) +
+    labs(
+      title = plot_title, 
+      x = "Engine Displacement (L)",
+      y = "Hwy MPG"
+    ) +
+    theme_minimal()
+}
+
+ds_mpg %<>%
+  mutate(
+    plots = 
+      pmap(       
+        .l = list(
+          data_orig = data, 
+          data_pred = pred, 
+          cyl = cyl
+        ), 
+        .f = gg_foo
+      )
+  ) 
+
+ds_mpg
+```
+
+You can preview the plots just by calling the variable: 
+```{r}
+ds_mpg$plots
+```
+
+You can also add file_names and save the plots: 
+```{r generate file names for plots}
+name_plots <- function(name = cyl){
+  str_c("plot_", name, "cyl.png")
+}
+
+ds_mpg %<>% 
+  mutate(file_names = map_chr(cyl, name_plots))
+```
+
+```{r save plots as png files}
+map2(
+  ds_mpg$file_names, 
+  ds_mpg$plots, 
+  ggsave, 
+   height = 4,
+   width = 6
+)
+```
+
+This approach might seem overkill for a small dataset like `mtcars`. But imagine if you had a larger dataset with dozens or hundreds of groups you wanted to process. List columns can be  aversatile tool to manipulate and store complex data objects within a familiar object, the dataframe. Why is that useful? Because **dataframes are a great way to line things up.** That painfully simple statement took me 7 years to arrive at, "Dataframes are really great at lining things up". At some point while using R you may think, "Hey it would be nice if I could line up data subsets with models, or data subsets with plotting functions, and dataframes and list columns will let you do that.
+
+# References
+
+[Saving multiple plots in one blow](https://www.r-bloggers.com/make-ggplot2-purrr/)

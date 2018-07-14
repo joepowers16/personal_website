@@ -1,0 +1,1263 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "mainEntityOfPage": {
+             "@type": "WebPage",
+             "@id": "/"
+        },
+        "articleSection" : "post",
+        "name" : "Visualizing (many) model predictions",
+        "headline" : "Visualizing (many) model predictions",
+        "description" : "library(tidyverse) library(magrittr) library(modelr) ds_mt &lt;- mtcars p_mpg &lt;- ds_mt %&gt;% ggplot(aes(x = wt, y = mpg)) + geom_point() p_mpg m1 &lt;- lm(mpg ~ wt, ds_mt) m2 &lt;- lm(mpg ~ wt + I(wt^2), ds_mt) ds_mt %&lt;&gt;% add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% add_predictions(m2, var = &quot;m2_pred&quot;) Show a predicted model using raw data to demo need for a full dataset. p_mpg + geom_point( data = ds_mt, aes(x = wt, y = m2_pred), color = &quot;red&quot; )  show how to make a full dataset Creates 10 values for each var that are equally spaced along its range.",
+        "inLanguage" : "en",
+        "author" : "",
+        "creator" : "",
+        "publisher": "",
+        "accountablePerson" : "",
+        "copyrightHolder" : "",
+        "copyrightYear" : "2018",
+        "datePublished": "2018-06-21 00:00:00 &#43;0000 UTC",
+        "dateModified" : "2018-06-21 00:00:00 &#43;0000 UTC",
+        "url" : "/post/visualizing-many-model-predictions/",
+        "wordCount" : "597",
+        "keywords" : [ "Blog" ]
+    }
+    </script>
+        
+            
+                <title>Visualizing (many) model predictions</title>
+            
+        
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content="Hugo 0.42.1" />
+        
+
+
+        
+            <meta name="author" content="Joe Powers">
+        
+        
+            
+                <meta name="description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo">
+            
+        
+
+        <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Visualizing (many) model predictions"/>
+<meta name="twitter:description" content="library(tidyverse) library(magrittr) library(modelr) ds_mt &lt;- mtcars p_mpg &lt;- ds_mt %&gt;% ggplot(aes(x = wt, y = mpg)) &#43; geom_point() p_mpg m1 &lt;- lm(mpg ~ wt, ds_mt) m2 &lt;- lm(mpg ~ wt &#43; I(wt^2), ds_mt) ds_mt %&lt;&gt;% add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% add_predictions(m2, var = &quot;m2_pred&quot;) Show a predicted model using raw data to demo need for a full dataset. p_mpg &#43; geom_point( data = ds_mt, aes(x = wt, y = m2_pred), color = &quot;red&quot; )  show how to make a full dataset Creates 10 values for each var that are equally spaced along its range."/>
+<meta name="twitter:site" content="@example"/>
+
+        <meta property="og:title" content="Visualizing (many) model predictions" />
+<meta property="og:description" content="library(tidyverse) library(magrittr) library(modelr) ds_mt &lt;- mtcars p_mpg &lt;- ds_mt %&gt;% ggplot(aes(x = wt, y = mpg)) &#43; geom_point() p_mpg m1 &lt;- lm(mpg ~ wt, ds_mt) m2 &lt;- lm(mpg ~ wt &#43; I(wt^2), ds_mt) ds_mt %&lt;&gt;% add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% add_predictions(m2, var = &quot;m2_pred&quot;) Show a predicted model using raw data to demo need for a full dataset. p_mpg &#43; geom_point( data = ds_mt, aes(x = wt, y = m2_pred), color = &quot;red&quot; )  show how to make a full dataset Creates 10 values for each var that are equally spaced along its range." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/visualizing-many-model-predictions/" />
+
+
+
+<meta property="article:published_time" content="2018-06-21T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2018-06-21T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+        <meta property="og:image" content="//images/logo.png">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="512">
+        <meta property="og:image:height" content="512">
+        
+<meta itemprop="name" content="Visualizing (many) model predictions">
+<meta itemprop="description" content="library(tidyverse) library(magrittr) library(modelr) ds_mt &lt;- mtcars p_mpg &lt;- ds_mt %&gt;% ggplot(aes(x = wt, y = mpg)) &#43; geom_point() p_mpg m1 &lt;- lm(mpg ~ wt, ds_mt) m2 &lt;- lm(mpg ~ wt &#43; I(wt^2), ds_mt) ds_mt %&lt;&gt;% add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% add_predictions(m2, var = &quot;m2_pred&quot;) Show a predicted model using raw data to demo need for a full dataset. p_mpg &#43; geom_point( data = ds_mt, aes(x = wt, y = m2_pred), color = &quot;red&quot; )  show how to make a full dataset Creates 10 values for each var that are equally spaced along its range.">
+
+
+<meta itemprop="datePublished" content="2018-06-21T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-06-21T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="597">
+
+
+
+<meta itemprop="keywords" content="" />
+
+        
+
+        
+            
+        
+
+        
+        
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,800,900|Source+Sans+Pro:400,700">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.css">
+            <link rel="stylesheet" href="/css/main.css">
+            <link rel="stylesheet" href="/css/add-on.css">
+            <link rel="stylesheet" href="/css/academicons.min.css">
+        
+
+        
+            
+                
+            
+        
+
+
+  
+    
+    <link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+  
+
+
+      
+    </head>
+    <body>
+
+      
+      <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+      <h1><a href="/">post</a></h1>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="/">
+                            <i class="fa fa-home">&nbsp;</i>Home
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/about/">
+                            <i class="fa fa-id-card-o">&nbsp;</i>About
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/blog/">
+                            <i class="fa fa-newspaper-o">&nbsp;</i>Blog
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/itemized/">
+                            <i class="fa fa-list">&nbsp;</i>Itemized
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/categories/">
+                            <i class="fa fa-sitemap">&nbsp;</i>Categories
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="/contact/">
+                            <i class="fa fa-envelope-o">&nbsp;</i>Contact
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="as_sitesearch" value="/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="as_sitesearch" value="/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="/">
+                            <h3>
+                                <i class="fa fa-home">&nbsp;</i>Home
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/about/">
+                            <h3>
+                                <i class="fa fa-id-card-o">&nbsp;</i>About
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/blog/">
+                            <h3>
+                                <i class="fa fa-newspaper-o">&nbsp;</i>Blog
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/itemized/">
+                            <h3>
+                                <i class="fa fa-list">&nbsp;</i>Itemized
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/categories/">
+                            <h3>
+                                <i class="fa fa-sitemap">&nbsp;</i>Categories
+                            </h3>
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/contact/">
+                            <h3>
+                                <i class="fa fa-envelope-o">&nbsp;</i>Contact
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section class="recent-posts">
+            <div class="mini-posts">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+
+                
+                    
+                
+
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/map2-vs-pmap/">map2 vs pmap</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-13'>
+                                    July 13, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/need-for-entertainment/">Need for entertainment</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-12'>
+                                    July 12, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/mutating-with-joins/">mutating with joins</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-12'>
+                                    July 12, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/list-columns-can-purrr-and-loudly/">Herding Cats with List columns</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-11'>
+                                    July 11, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/post/purrring/">purrring</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2018-07-11'>
+                                    July 11, 2018</time>
+                            </header>
+                            
+
+                        </article>
+                
+
+                
+                    <a href=
+                        
+                            /blog/
+                        
+                        class="button">View more posts</a>
+                
+            </div>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;text=Visualizing%20%28many%29%20model%20predictions&amp;via=example" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;description=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by Joe%20Powers&amp;body=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+  <header>
+    <div class="title">
+        
+            <h1><a href="/post/visualizing-many-model-predictions/">Visualizing (many) model predictions</a></h1>
+            
+        
+        
+    </div>
+    <div class="meta">
+        
+
+        <time class="published"
+            datetime='2018-06-21'>
+            June 21, 2018</time>
+        <span class="author">Joe Powers</span>
+        
+            <p>3 minute read</p>
+        
+        
+    </div>
+</header>
+
+
+  
+    <section id="social-share">
+      <ul class="icons">
+        
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;text=Visualizing%20%28many%29%20model%20predictions&amp;via=example" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;title=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fvisualizing-many-model-predictions%2f&amp;description=Visualizing%20%28many%29%20model%20predictions" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by Joe%20Powers&amp;body=%2fpost%2fvisualizing-many-model-predictions%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+      </ul>
+    </section>
+  
+
+  
+
+  <div id="content">
+    <pre class="r"><code>library(tidyverse)
+library(magrittr)
+library(modelr)</code></pre>
+<pre class="r"><code>ds_mt &lt;- mtcars</code></pre>
+<pre class="r"><code>p_mpg &lt;- 
+  ds_mt %&gt;% 
+  ggplot(aes(x = wt, y = mpg)) + 
+  geom_point()
+
+p_mpg</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>m1 &lt;- lm(mpg ~ wt, ds_mt)
+m2 &lt;- lm(mpg ~ wt + I(wt^2), ds_mt)</code></pre>
+<pre class="r"><code>ds_mt %&lt;&gt;% 
+    add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% 
+  add_predictions(m2, var = &quot;m2_pred&quot;)</code></pre>
+<div id="show-a-predicted-model-using-raw-data-to-demo-need-for-a-full-dataset." class="section level2">
+<h2>Show a predicted model using raw data to demo need for a full dataset.</h2>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mt, 
+    aes(x = wt, y = m2_pred), 
+    color = &quot;red&quot;
+  )</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="show-how-to-make-a-full-dataset" class="section level2">
+<h2>show how to make a full dataset</h2>
+<p>Creates 10 values for each var that are equally spaced along its range. 10 x 10 = 100 rows</p>
+<pre class="r"><code>ds_mtgrid &lt;- 
+  data_grid(
+    ds_mt, 
+    wt = seq_range(wt, 500), 
+    mpg = seq_range(mpg, 100)
+  )</code></pre>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+    add_predictions(m1, var = &quot;m1_pred&quot;) %&gt;% 
+  add_predictions(m2, var = &quot;m2_pred&quot;)</code></pre>
+<pre class="r"><code>p_mpg + 
+    geom_point(
+      data = ds_mtgrid, 
+      aes(x = wt, y = m1_pred), 
+      size = .1, 
+      color = &quot;blue&quot;
+    ) + 
+    geom_point(
+      data = ds_mtgrid,
+      aes(x = wt, y = m2_pred), 
+      size = .1, 
+      color = &quot;red&quot;
+    )</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/2%20plots-1.png" width="672" /></p>
+<p>The above plot makes is too cluttered, so let’s gather the predicted values into one column so we can facet the data into seperate plots.</p>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+  gather(m1_pred, m2_pred, key = model, value = mpg_pred) </code></pre>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mtgrid, 
+    aes(x = wt, y = mpg_pred), 
+    size = .1, 
+    color = &quot;red&quot;
+  ) + 
+  facet_grid(~model)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/facetted_plot-1.png" width="960" /></p>
+</div>
+<div id="gather_predictions" class="section level1">
+<h1>gather_predictions()</h1>
+<p>Suppose we had even more models we wanted to test.</p>
+<pre class="r"><code>m1 &lt;- lm(mpg ~ wt, data = ds_mt)
+m2 &lt;- lm(mpg ~ wt + I(wt^2), data = ds_mt)
+m3 &lt;- lm(mpg ~ wt + I(wt^2) + I(wt^3), data = ds_mt)
+m4 &lt;- lm(mpg ~ wt + I(wt^2) + I(wt^3) + I(wt^4), data = ds_mt)</code></pre>
+<p>We can use <code>gather_predictions()</code> to add the predicted outcomes to our dataset.</p>
+<pre class="r"><code>ds_mtgrid %&lt;&gt;% 
+  gather_predictions(m1, m2, m3, m4, .pred = &quot;mpg_pred&quot;)</code></pre>
+<pre class="r"><code>p_mpg + 
+  geom_point(
+    data = ds_mtgrid, 
+    aes(x = wt, y = mpg_pred), 
+    size = .1, 
+    color = &quot;red&quot;
+  ) + 
+  facet_wrap(~model)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/many%20plots-1.png" width="672" /></p>
+</div>
+<div id="on-return-try-to-pull-r.squared-from-many-models" class="section level1">
+<h1>On return try to pull R.squared from many models</h1>
+<p>Many models has two basic approaches. You can apply the same model to many subsets, or you can apply multiple models to the same data.</p>
+<div id="applying-the-same-model-to-many-subsets" class="section level2">
+<h2>Applying the same model to many subsets</h2>
+<pre class="r"><code># Create a nested dataframe
+ds_by_cyl &lt;- 
+  ds_mt %&gt;% 
+  group_by(cyl) %&gt;% 
+  nest()
+
+# Create a model to apply as a function within map()
+my_model &lt;- function(mydata){
+  lm(mpg ~ wt, data = mydata)
+}
+
+# create a model for each dataframe in your list column called &quot;data&quot;
+ds_by_cyl %&lt;&gt;% 
+  mutate(model = map(data, my_model))
+
+# Exract key model stats using `broom::glance()`
+ds_by_cyl %&lt;&gt;% 
+  mutate(model_stats = map(model, broom::glance))
+
+# Unnest the `model_stats` list column so you can plot relevant stat from each model
+ds_by_cyl %&gt;% 
+  unnest(model_stats) %&gt;% 
+  ggplot(aes(x = cyl, y = r.squared)) + 
+  geom_line() + 
+  geom_point(color = &quot;red&quot;) +
+  scale_x_continuous(breaks = seq(4,8, by = 2)) + 
+  labs(title = &quot;Weight explain more odf the variance in mpg for smaller engine cars&quot;)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/same%20model%20to%20subsets%20of%20one%20df-1.png" width="672" /></p>
+<p>Can you save the df in each list-col cell from Diamonds Part 4: <a href="https://github.com/dcl-2017-04/tasks/blob/master/c27-diamonds-4/solution.md" class="uri">https://github.com/dcl-2017-04/tasks/blob/master/c27-diamonds-4/solution.md</a></p>
+<pre class="r"><code>ds_mt %&lt;&gt;% rownames_to_column(&quot;vehicle&quot;) 
+
+model_stats &lt;- function(formula, mydata = ds_mt) {
+  v &lt;- lm(formula, data = mydata)
+  
+  tibble(
+    formula = formula,
+    n_coefs = coef(v) %&gt;% length(),
+    r_squared = broom::glance(v)$r.squared
+  )
+}
+
+many_models &lt;- 
+  list(
+    &quot;mpg ~ wt&quot;,
+    &quot;mpg ~ wt + disp&quot;,
+    &quot;mpg ~ wt + disp + am&quot;,
+    &quot;mpg ~ wt + disp + vs&quot;,
+    &quot;mpg ~ wt + disp + am + vs&quot;
+  ) 
+
+ds_models &lt;- map_df(many_models, model_stats)
+
+ds_models %&gt;% 
+  ggplot(aes(x = n_coefs, y = r_squared, label = formula)) + 
+  geom_line() + 
+  geom_point() + 
+  ggrepel::geom_text_repel(point.padding = 1) + 
+  coord_cartesian(xlim = c(1.75, 5.5)) + 
+  labs(title = &quot;AM adds little to model&quot;)</code></pre>
+<p><img src="/post/2018-06-21-visualizing-many-model-predictions_files/figure-html/many%20models%20to%20one%20df-1.png" width="672" /></p>
+</div>
+</div>
+<div id="can-you-store-all-those-plots-in-one-tibble" class="section level1">
+<h1>Can you store all those plots in one tibble?</h1>
+</div>
+
+  </div>
+
+  <footer>
+    <ul class="stats">
+  <li class="categories">
+    <ul>
+        
+            
+            
+        
+    </ul>
+  </li>
+  <li class="tags">
+    <ul>
+        
+            
+            
+        
+    </ul>
+  </li>
+</ul>
+
+  </footer>
+
+</article>
+
+    <article class="post">
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "shortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </article>
+
+
+<ul class="actions pagination">
+    
+        <li><a href="/post/planning-in-hindsight/"
+                class="button big previous">Planning in Hindsight</a></li>
+    
+
+    
+        <li><a href="/post/let-me-convert-you-to-pipes/"
+                class="button big next">Let me convert you to pipes</a></li>
+    
+</ul>
+
+
+    </div>
+    
+<section id="sidebar">
+
+  
+  <section id="intro">
+    
+    
+      
+        <a href='/' class="logo"><img src="/img/main/logo.jpg" alt="Hugo Future Imperfect" /></a>
+      
+    
+    
+      <header>
+        <h2>Joseph T Powers</h2>
+        <p>Misadventures in data science and other crafts.</p>
+      </header>
+    
+    
+      <ul class="icons">
+        
+          
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+
+
+        
+        
+  <li><a href="//github.com/joepowers16" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//flickr.com/photos/example" target="_blank" title="Flickr" class="fa fa-flickr"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//linkedin.com/in/example" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+  <li><a href="//linkedin.com/company/examplebusiness" target="_blank" title="LinkedIn Company" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+  <li><a href="//facebook.com/example" target="_blank" title="Facebook" class="fa fa-facebook"></a></li>
+
+
+
+
+
+  <li><a href="//reddit.com/user/example" target="_blank" title="Reddit" class="fa fa-reddit"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//instagram.com/example" target="_blank" title="Instagram" class="fa fa-instagram"></a></li>
+
+
+
+
+
+  <li><a href="//twitter.com/example" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+
+
+
+  <li><a href="//pinterest.com/example" target="_blank" title="Pinterest" class="fa fa-pinterest-p"></a></li>
+
+
+
+  <li><a href="//telegram.me/example" target="_blank" title="telegram" class="fa fa-telegram"></a></li>
+
+
+
+
+
+
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+
+
+
+  <li><a href="mailto:example" title="Email" class="fa fa-envelope"></a></li>
+
+
+      </ul>
+    
+  </section>
+
+  
+  <section class="recent-posts">
+    <div class="mini-posts">
+      <header>
+        <h3>Recent Posts</h3>
+      </header>
+      <div class="posts-container">
+        
+
+        
+          
+        
+
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/map2-vs-pmap/">map2 vs pmap</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-13'>
+                July 13, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/need-for-entertainment/">Need for entertainment</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-12'>
+                July 12, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/mutating-with-joins/">mutating with joins</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-12'>
+                July 12, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/list-columns-can-purrr-and-loudly/">Herding Cats with List columns</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-11'>
+                July 11, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/post/purrring/">purrring</a>
+              </h3>
+              
+              <time class="published" datetime='2018-07-11'>
+                July 11, 2018
+              </time>
+            </header>
+            
+
+          </article>
+        
+      </div>
+
+      
+        <a href=
+          
+            /blog/
+          
+        class="button">View more posts</a>
+      
+    </div>
+  </section>
+
+  
+  
+  
+  
+  
+    <section id="categories">
+      <header>
+        <h3>
+          <a href="/categories/">Categories</a>
+        </h3>
+      </header>
+        
+          
+        
+
+        
+        <p>
+          <article>
+            <header>
+              
+                Uncategorized
+                <span style="float:right;">4</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/hugo/">Hugo</a>
+                <span style="float:right;">2</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/go/">Go</a>
+                <span style="float:right;">1</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/r/">R</a>
+                <span style="float:right;">1</span>
+              
+            </header>
+          </article>
+        </p>
+        
+    </section>
+  
+  
+
+  
+  
+    <section id="mini-bio">
+      <h3>About</h3>
+      <p>I am a data science in People Analytics at Genentech. In my free time I am an avid furniture maker and cook.</p>
+      <a href="/about/" class="button">Learn More</a>
+    </section>
+  
+
+  
+  <section id="footer">
+    
+      <ul class="icons">
+        
+          
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+
+
+        
+        
+  <li><a href="//github.com/joepowers16" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//flickr.com/photos/example" target="_blank" title="Flickr" class="fa fa-flickr"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//linkedin.com/in/example" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+  <li><a href="//linkedin.com/company/examplebusiness" target="_blank" title="LinkedIn Company" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+  <li><a href="//facebook.com/example" target="_blank" title="Facebook" class="fa fa-facebook"></a></li>
+
+
+
+
+
+  <li><a href="//reddit.com/user/example" target="_blank" title="Reddit" class="fa fa-reddit"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <li><a href="//instagram.com/example" target="_blank" title="Instagram" class="fa fa-instagram"></a></li>
+
+
+
+
+
+  <li><a href="//twitter.com/example" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+
+
+
+  <li><a href="//pinterest.com/example" target="_blank" title="Pinterest" class="fa fa-pinterest-p"></a></li>
+
+
+
+  <li><a href="//telegram.me/example" target="_blank" title="telegram" class="fa fa-telegram"></a></li>
+
+
+
+
+
+
+
+
+
+<li><a href="//researchgate.net/profile/example" target="_blank" title="Research Gate"><i class="ai ai-researchgate"></i></a></li>
+
+
+
+  <li><a href="mailto:example" title="Email" class="fa fa-envelope"></a></li>
+
+
+      </ul>
+    
+    <p class="copyright">
+      
+        &copy; 2018
+        
+          Data Sciencing, Woodworking, and Cooking
+        
+      .
+      Powered by <a href="//gohugo.io" target="_blank">Hugo</a>
+    </p>
+  </section>
+</section>
+
+    </div>
+    <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+    
+
+    
+      
+    
+
+    
+      
+      
+      
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+        
+        
+        
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/css.min.js"></script>
+        <script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+      
+    
+    
+    
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.js"></script>
+      <script src="/js/util.js"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/backToTop.js"></script>
+    
+
+    
+      
+        
+      
+    
+
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+      <script src="//yihui.name/js/math-code.js"></script>
+<script async
+src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+  </body>
+</html>
+

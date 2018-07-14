@@ -1,7 +1,7 @@
 +++
-author = "Hugo author"
+author = "Joseph T. Powers"
 categories = ["Hugo"]
-date = "2014-04-02"
+date = "2018-06-20"
 description = ""
 featured = "pic01.jpg"
 featuredalt = "Pic 1"
@@ -14,12 +14,7 @@ type = "post"
 
 ## Step 1. Install Hugo
 
-Go to [hugo releases](https://github.com/spf13/hugo/releases) and download the
-appropriate version for your os and architecture.
 
-Save it somewhere specific as we will be using it in the next step.
-
-More complete instructions are available at [installing hugo](/overview/installing/)
 <!--more-->
 
 ## Step 2. Build the Docs

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Post on Data Sciencing, Woodworking, and Cooking</title>
+    <link>/post/</link>
+    <description>Recent content in Post on Data Sciencing, Woodworking, and Cooking</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Jul 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>map2 vs pmap</title>
+      <link>/post/map2-vs-pmap/</link>
+      <pubDate>Fri, 13 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/map2-vs-pmap/</guid>
+      <description>ds_mpg %&amp;lt;&amp;gt;% mutate(plots = map2(data, pred, gg_foo)) ds_mpg %&amp;lt;&amp;gt;% mutate( plots = pmap( # Note that pmap() needs is data arguments supplied as a list() .l = list( data_orig = data, data_pred = pred, cyl = cyl ), .f = gg_foo ) )  </description>
+    </item>
+    
+    <item>
+      <title>Need for entertainment</title>
+      <link>/post/need-for-entertainment/</link>
+      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/need-for-entertainment/</guid>
+      <description>My nonfiction reading list has really come together around a common theme this week: The human need for fiction.
+First this video where the anthropologist observes the endless cycle of violence that consumes these New Guineans. But how without this cycle of violence their lives would be unbearably dull.
+Then Sapiens
+Then How to Change your Mind
+All of these readings, contributed to a sense that entertainment is not a distraction from what is real in life.</description>
+    </item>
+    
+    <item>
+      <title>mutating with joins</title>
+      <link>/post/mutating-with-joins/</link>
+      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/mutating-with-joins/</guid>
+      <description>So often I want to combine the mutate and filter variables, to change select variables to equal specific values fomr other variables. The best way to do this is through joins. Filter and save the data you want to impute from, join, then your conditional replacement will be a breeze.</description>
+    </item>
+    
+    <item>
+      <title>Herding Cats with List columns</title>
+      <link>/post/list-columns-can-purrr-and-loudly/</link>
+      <pubDate>Wed, 11 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/list-columns-can-purrr-and-loudly/</guid>
+      <description>Notice the vector class for the second column in this tibble.
+## # A tibble: 4 x 2 ## cyl data ## &amp;lt;int&amp;gt; &amp;lt;list&amp;gt; ## 1 4 &amp;lt;tibble [81 × 10]&amp;gt; ## 2 5 &amp;lt;tibble [4 × 10]&amp;gt; ## 3 6 &amp;lt;tibble [79 × 10]&amp;gt; ## 4 8 &amp;lt;tibble [70 × 10]&amp;gt; It’s labelled &amp;lt;list&amp;gt;, indicating that it is a “list column”. When I first learned about list columns I thought, “Neat, but when will I ever use these?</description>
+    </item>
+    
+    <item>
+      <title>purrring</title>
+      <link>/post/purrring/</link>
+      <pubDate>Wed, 11 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/purrring/</guid>
+      <description>Within a mutate() I can call map2.
+ds_mtcars %&amp;lt;&amp;gt;% mutate(pred = map2(grid, model, add_predictions)) BUt not outside of mutate()
+map2(ds_mtcars$file_names, ds_mtcars$plots, ggsave) ds_mtcars %&amp;gt;% map2(file_names, plots, ggsave) </description>
+    </item>
+    
+    <item>
+      <title>Chronicle your ideal self</title>
+      <link>/post/chronicle-your-ideal-self/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/chronicle-your-ideal-self/</guid>
+      <description>You should use your current job to qualify yourself for your next job. While you won’t be able to show most of your work publicly. Do give an inkling of what you did by blogging about it. Then you can claim the full scope of teh absrtact work you did at your company.</description>
+    </item>
+    
+    <item>
+      <title>Map2</title>
+      <link>/post/map2/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/map2/</guid>
+      <description>Note that map2() seems to requires vector arguments in the form df$var
+library(dplyr) library(purrr) # Create frequency table ds_cyl_n &amp;lt;- mtcars %&amp;gt;% count(cyl) # Create custom function for use in map() my_sample_n &amp;lt;- function(x, y){ mtcars %&amp;gt;% filter(cyl == x) %&amp;gt;% sample_n( size = y, replace = TRUE ) } # hacky map map2_df(.x = ds_cyl_n$cyl, .y = ds_cyl_n$n, .f = my_sample_n) pmap() should be able to handle the dataframe as an argument but only when the column names are the same as the argument names expected by the function.</description>
+    </item>
+    
+    <item>
+      <title>Questions to ask at your interview</title>
+      <link>/post/questions-to-ask-at-your-interview/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/questions-to-ask-at-your-interview/</guid>
+      <description>Copy in the email you rwrote to Jen today.</description>
+    </item>
+    
+    <item>
+      <title>web scraping with R</title>
+      <link>/post/web-scraping-with-r/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/web-scraping-with-r/</guid>
+      <description>Using Jason Goodman’s post as a launch pad I started scarping data.
+library(rvest) ## Loading required package: xml2 school_ranks_url &amp;lt;- &amp;quot;https://www.nerdwallet.com/blog/mortgages/best-school-districts-southern-california-2015/&amp;quot; wp_ranks &amp;lt;- read_html(school_ranks_url) ranks_raw &amp;lt;- html_nodes(wp_ranks, &amp;quot;td&amp;quot;) %&amp;gt;% html_text() class(ranks_raw) ## [1] &amp;quot;character&amp;quot; matrix(ranks_raw, ncol = 9, nrow = 153) %&amp;gt;% data.frame() ## X1 X2 ## 1 1 18 ## 2 Walnut Valley Unified Manhattan Beach Unified ## 3 $597,800 $1,000,000 ## 4 1722 1776 ## 5 402 413 ## 6 98.</description>
+    </item>
+    
+    <item>
+      <title>Average performance vs who does the school work for</title>
+      <link>/post/average-performance-vs-who-does-the-school-work-for/</link>
+      <pubDate>Mon, 09 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/average-performance-vs-who-does-the-school-work-for/</guid>
+      <description>When choosing where to live so many families fixate on the schools’s quality, but take a closer look at what this really measures. In CA school quality is rated on average performance. This is a “better than nothing” metric, but if you have more data on your kid (you better) then you can probably make a better informed choice, and maybe get a better deal on housing.
+For instance RWC has low scores, but they have 40% ESL.</description>
+    </item>
+    
+    <item>
+      <title>contrasting colors on tile plots</title>
+      <link>/post/contrasting-colors-on-tile-plots/</link>
+      <pubDate>Mon, 09 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/contrasting-colors-on-tile-plots/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>bootstrapping samples</title>
+      <link>/post/bootstrapping-samples/</link>
+      <pubDate>Fri, 29 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/bootstrapping-samples/</guid>
+      <description>reference your code from 760_bootrstrap, but your solution to resampling with map was very elegant, particularly since you overcame the nonrandom nature of sample_n when reapplied in a function.</description>
+    </item>
+    
+    <item>
+      <title>Ideals on the shelf</title>
+      <link>/post/ideals-on-the-shelf/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/ideals-on-the-shelf/</guid>
+      <description>For many years I was in love with a friend, but we were never single at the same time, so it never happened. Until it did, she got out of a relationship in 2007 and I jumped out of a three-years relationship for what I thought might be my last chance. People were starting to get married by then after all.
+The relatinoship did not go well. It was entirely my own fault.</description>
+    </item>
+    
+    <item>
+      <title>Talking in Effect Sizes</title>
+      <link>/post/talking-in-effect-sizes/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/talking-in-effect-sizes/</guid>
+      <description>It is so valuable to have in your back pockket several examples of noteworthy effect sizes. These will silence the optimitsts. Realizes all reported effect sizes aer probably upper limits. Now ask could we expect an upper limit and would you be satisfied with this upper limit. It will almost certainly not be an out of the park effect, or it would be so obvious that all would have adopted it by now.</description>
+    </item>
+    
+    <item>
+      <title>Annotation</title>
+      <link>/post/annotation/</link>
+      <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/annotation/</guid>
+      <description>library(tidyverse) ## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1.9000 ✔ purrr 0.2.5 ## ✔ tibble 1.4.2 ✔ dplyr 0.7.5 ## ✔ tidyr 0.8.0 ✔ stringr 1.3.1 ## ✔ readr 1.1.1 ✔ forcats 0.3.0 ## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() mtcars %&amp;gt;% ggplot(aes(x = wt, y = mpg)) + geom_point() + annotate(&amp;quot;label&amp;quot;, label = &amp;quot;Yo!!!&amp;quot;, x = 4, y = 25, hjust = 1, color = &amp;quot;red&amp;quot;) + annotate(&amp;quot;text&amp;quot;, label = &amp;quot;Yo!</description>
+    </item>
+    
+    <item>
+      <title>Statistical Power in Workplace Experiments</title>
+      <link>/post/statistical-power-in-workplace-experiments/</link>
+      <pubDate>Wed, 27 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/statistical-power-in-workplace-experiments/</guid>
+      <description>Let’s do a little primer on probability. If I flip a coin, what is the probability I’ll get heads? 50%, let’s make it even easier and say 1 in 2. If I roll a die, what is the probability I’ll roll a 2? 1 in 6.
+Let;s take an example of a noteworthy but subtle effect size. If women feel 1/3 of a point less included than men on a 5-pt scale with an SD of 1, what is the probability I will detect a significant difference with 30 people per cell?</description>
+    </item>
+    
+    <item>
+      <title>Designing by attrition</title>
+      <link>/post/designing-by-attrition/</link>
+      <pubDate>Tue, 26 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/designing-by-attrition/</guid>
+      <description>I used to think of planning as foresight. Now I do so much new work that it is often best to jump right in and start working. And templates and structures are designed by attrition. Use ND example of paving the dead grass in an open quad. At first just see what elements of your code you are copying and pasting. Do it three times: Make a function. Same goes for templates.</description>
+    </item>
+    
+    <item>
+      <title>Expert Novices</title>
+      <link>/post/expert-novices/</link>
+      <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/expert-novices/</guid>
+      <description>[use rock rolling god pic: Sisiphus]
+Experts spend more time planning than novices, who tend to jump right in and start doing. The implication is that novices should try to plan the way experts do. There is a problem with this advice: Novices (by definition) don’t know what to anticipate and thus cannot plan. You need experience in order to plan, so to become an expert, novices should start racking up experience.</description>
+    </item>
+    
+    <item>
+      <title>git</title>
+      <link>/post/git/</link>
+      <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/git/</guid>
+      <description>Overview: There are legions of git guides already on the internet. I am writing this one for my team and myself who are newly collaborating on git. I assume that other newcomers to git collaboration will find it useful. This guide will cover the basics of collaborating and undoing mistakes.
+ Undoing in Git git revert The safest way to restore a previous version of your project is to use git revert 0d1d7fc32, where “0d1d7fc32” represent the hash number of the commit you want restored.</description>
+    </item>
+    
+    <item>
+      <title>Let me convert you to pipes</title>
+      <link>/post/let-me-convert-you-to-pipes/</link>
+      <pubDate>Fri, 22 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/let-me-convert-you-to-pipes/</guid>
+      <description>My mother (like many mothers) still has an AOL account. I think her reasoning is that AOL was so difficult to learn, investing the effort to learn gmail is just too daunting. I’ll leave it at that.
+If you’re not using pipes (%&amp;gt;%) in your R code, you basically have an AOL account.
+The following sequences are identical in their meaning, but see which one is more human readable:
+eat(butter(toast(slice(grab(bread))))) bread %&amp;gt;% grab() %&amp;gt;% slice() %&amp;gt;% toast() %&amp;gt;% butter() %&amp;gt;% eat() This is the beauty of pipes (and R generally): It let’s you think about data in a more human way.</description>
+    </item>
+    
+    <item>
+      <title>Visualizing (many) model predictions</title>
+      <link>/post/visualizing-many-model-predictions/</link>
+      <pubDate>Thu, 21 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/visualizing-many-model-predictions/</guid>
+      <description>library(tidyverse) library(magrittr) library(modelr) ds_mt &amp;lt;- mtcars p_mpg &amp;lt;- ds_mt %&amp;gt;% ggplot(aes(x = wt, y = mpg)) + geom_point() p_mpg m1 &amp;lt;- lm(mpg ~ wt, ds_mt) m2 &amp;lt;- lm(mpg ~ wt + I(wt^2), ds_mt) ds_mt %&amp;lt;&amp;gt;% add_predictions(m1, var = &amp;quot;m1_pred&amp;quot;) %&amp;gt;% add_predictions(m2, var = &amp;quot;m2_pred&amp;quot;) Show a predicted model using raw data to demo need for a full dataset. p_mpg + geom_point( data = ds_mt, aes(x = wt, y = m2_pred), color = &amp;quot;red&amp;quot; )  show how to make a full dataset Creates 10 values for each var that are equally spaced along its range.</description>
+    </item>
+    
+    <item>
+      <title>Planning in Hindsight</title>
+      <link>/post/planning-in-hindsight/</link>
+      <pubDate>Wed, 20 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/planning-in-hindsight/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
