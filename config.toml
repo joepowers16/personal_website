@@ -89,7 +89,7 @@ canonifyURLs = true
 [params.intro]
   header    = "Joseph T Powers"
 
-  paragraph = "Misadventures in data science and other crafts."
+  paragraph = "Misadventures in data science and other crafts"
 
   about     = "I am a data science in People Analytics at Genentech. In my free time I am an avid furniture maker and cook."
 
