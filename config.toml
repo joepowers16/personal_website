@@ -1,6 +1,6 @@
 baseurl = "/"
 languageCode = "en-us"
-title = "Misadventures in Data Science and Other Crafts" # the tab
+title = "Joseph T Powers" # the tab
 theme = "hugo-future-imperfect"
 preserveTaxonomyNames = true
 paginate = 3
