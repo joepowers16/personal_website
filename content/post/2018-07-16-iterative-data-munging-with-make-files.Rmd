@@ -1,0 +1,20 @@
+---
+title: Iterative data munging with make files
+author: Joe Powers
+date: '2018-07-16'
+slug: iterative-data-munging-with-make-files
+categories:
+  - munging
+  - wrangling
+tags:
+  - make
+  - GNU make
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+draft: TRUE
+---
+
+Just a test of the draft option
