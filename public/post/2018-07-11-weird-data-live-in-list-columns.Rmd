@@ -1,8 +1,8 @@
 ---
-title: Herding Cats with List columns
+title: Herding cats with list columns and purrr 
 author: Joe Powers
-date: '2018-07-11'
-slug: list-columns-can-purrr-and-loudly
+date: '2018-07-14'
+slug: herding-cats-with-list-columns-and-purrr
 categories: []
 tags: []
 description: ''
@@ -12,17 +12,13 @@ featuredpath: ''
 linktitle: ''
 ---
 
-Notice the vector class for the second column in this tibble. 
-```{r list col example, echo=FALSE, message=FALSE, warning=FALSE}
-library(tidyverse)
-
-mpg %>% 
-  group_by(cyl) %>% 
-  nest() %>% 
-  arrange(cyl)
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics("https://media.giphy.com/media/7MIULHLEeZyKs/giphy.gif")
 ```
 
-It's labelled `<list>`, indicating that it is a "list column". When I first learned about **list columns** I thought, "Neat, but when will I ever use these?" In the year since they've become my life-line for iterative programming challenges. They've become a life line because they are so versatile in what they can store. Virtually any data object can be saved as a list. So list columns can store models, data frames, plots, etc. And the reason this versatility is so useful is that it keeps objects aligned, which is essential for iterative programming. 
+When I first learned about list columns, I thought, "Weird, when will I ever use these?" In the year since, list columns have become my go-to data storage method as soon as I feel like I'm herding cats. That feeling usually arises when my analysis moves from processing typical numeric and text data to iterative programming on more complex data objects like lists, subsets, models, and plots. All of which will fit very nicely within list columns. 
+
+In this post I'll demonstrate the versatility of list columns to hold mulitple types of complex data as well as keep that data aligned so that you can iteratively program using the `purrr` package. 
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -30,12 +26,12 @@ library(magrittr)
 library(modelr) 
 ```
 
-You're probably already familiar with the numeric and character vectors that populate most dataframes. 
+You're probably already familiar with character, double, and integer vectors like those found in the `mpg` tibble below (Note: if you weren't already familiar with tibbles, they are just a special type of dataframe that has been formatted to handle list columns). 
 ```{r}
-mpg
+mpg %>% head(5)
 ```
 
-List columns are a special kind of vector. They're like the suitcase from *Incredible Beasts and Where to Find Them*: They look small but whole worlds can exist inside. While atomic vectors (e.g., double and character vectors) store individual numeric or text values, list columns can store weird data types like models, functions, plots, or even dataframes within dataframes or tibbles within tibbles. In the example below I use `group_by()` and `nest()` to create a list column, which by default will be named `data`.
+List columns are another kind of vector. They're like the suitcase from *Incredible Beasts and Where to Find Them*: They look small but whole worlds can exist inside. While atomic vectors (e.g., double and character vectors) store individual numeric or text values, list columns can store complex data types like models, functions, plots, or even dataframes within dataframes or tibbles within tibbles. In the example below I use `group_by()` and `nest()` to create a list column, which by default will be named `data`.
 ```{r}
 ds_mpg <- 
   mpg %>% 
@@ -46,13 +42,12 @@ ds_mpg <-
 ds_mpg
 ```
 
-All the data from rows with 4 cylinders has been saved in the first element of the list column. Let's view it. 
+Each element of the list column `data` contains all the data associated with that cylinder count. Let's view the first element.
 ```{r}
 ds_mpg$data[[1]]
 ```
 
-
-I now have a list column whose values are datasets. So what? Well this arrangement leaves me nicely positioned to perform iterative data analysis. For instance, I can apply a custom function to each dataframe in the list column, and then save the model outputs in ... another list column, and everything remains aligned. 
+As you can see above the list column elements are entire tibbles, all lined up for iterative processing with for loops or--better still--`purrr's` map functions. In the next chunks I apply a custom function that fits a linear model to each tibble in the list column, and then saves the model output in yet another list column. This avoids repetition in code and maintains alignment of data, models, and outputs. Not bad.
 ```{r}
 # Create a custom function for modeling the data
 foo_model <- function(data){
@@ -66,9 +61,8 @@ ds_mpg %<>%
 ds_mpg
 ```
 
-Now that I have the models saved in their own list column I can work iteratively with them as well. What if I want to plot the predicted values of each model? Well I can do so and save the plots in a list column. And everything remains aligned and organized. 
-
-To plot the model outputs I'll want to create a data grid of all possible values and then use ggplot() to create a unique plot for each model and dataframe.  
+Now that I have the models saved in their own list column called `model` I can work iteratively with them as well. What if I want to plot the predicted values of each model? Well I can do so and save the plots in yet another list column.  
+To plot the model outputs I'll want to create a data grid of all possible values and then use `ggplot()` to create a unique plot for each models predictions against its actual data.  
 ```{r warning=FALSE}
 # First let's add another list column for the data grids
 ds_mpg %<>%
@@ -88,14 +82,12 @@ ds_mpg %<>%
 ds_mpg
 ```
 
-Finally let's visualize all of it and save the results in ... a list column.
+Finally let's create plots for each cylinder count, add custom titles, and save the results in out last list column `plots`.
 ```{r}
-range(mpg$displ)
-range(mpg$hwy)
-
+# Create custom plotting function
 gg_foo <- function(data_orig = data, data_pred = pred, cyl = cyl){
   # generate plot title
-  plot_title <- paste(cyl, "cylinder cars") # DEBUG
+  plot_title <- paste(cyl, "cylinder cars")
     
   # plot raw data
   data_orig %>% 
@@ -106,8 +98,7 @@ gg_foo <- function(data_orig = data, data_pred = pred, cyl = cyl){
       data = data_pred, 
       aes(x = displ, y = hwy_pred), 
       color = "red",
-      size = .5,
-      shape = 23
+      size = .5
     ) + 
     scale_x_continuous(
       breaks = seq(1, 7, by = 1),
@@ -125,6 +116,7 @@ gg_foo <- function(data_orig = data, data_pred = pred, cyl = cyl){
     theme_minimal()
 }
 
+# Iteratively apply function 
 ds_mpg %<>%
   mutate(
     plots = 
@@ -141,12 +133,12 @@ ds_mpg %<>%
 ds_mpg
 ```
 
-You can preview the plots just by calling the variable: 
+You can preview the plots just by calling the `plots` variable: 
 ```{r}
 ds_mpg$plots
 ```
 
-You can also add file_names and save the plots: 
+You can also add file names and save the plots.
 ```{r generate file names for plots}
 name_plots <- function(name = cyl){
   str_c("plot_", name, "cyl.png")
@@ -156,7 +148,7 @@ ds_mpg %<>%
   mutate(file_names = map_chr(cyl, name_plots))
 ```
 
-```{r save plots as png files}
+```{r save plots as png files, eval=FALSE}
 map2(
   ds_mpg$file_names, 
   ds_mpg$plots, 
@@ -166,7 +158,7 @@ map2(
 )
 ```
 
-This approach might seem overkill for a small dataset like `mtcars`. But imagine if you had a larger dataset with dozens or hundreds of groups you wanted to process. List columns can be  aversatile tool to manipulate and store complex data objects within a familiar object, the dataframe. Why is that useful? Because **dataframes are a great way to line things up.** That painfully simple statement took me 7 years to arrive at, "Dataframes are really great at lining things up". At some point while using R you may think, "Hey it would be nice if I could line up data subsets with models, or data subsets with plotting functions, and dataframes and list columns will let you do that.
+This approach might seem overkill for a small dataset like `mpg`, but imagine if you had a larger dataset with dozens or hundreds of groups you wanted to process. In such scenarios, list columns can be an invaluable tool for manipulating and storing complex data objects by herding them into a familiar data structure, the dataframe/tibble. 
 
 # References
 
