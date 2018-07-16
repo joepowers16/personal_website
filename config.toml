@@ -1,6 +1,6 @@
 baseurl = "/"
 languageCode = "en-us"
-title = "Data Sciencing, Woodworking, and Cooking" # the tab
+title = "Misadventures in Data Science and Other Crafts" # the tab
 theme = "hugo-future-imperfect"
 preserveTaxonomyNames = true
 paginate = 3
