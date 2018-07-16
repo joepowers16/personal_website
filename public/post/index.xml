@@ -6,7 +6,7 @@
     <description>Recent content in Post on Data Sciencing, Woodworking, and Cooking</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Herding cats with list columns and purrr</title>
       <link>/post/herding-cats-with-list-columns-and-purrr/</link>
-      <pubDate>Sat, 14 Jul 2018 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 15 Jul 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/herding-cats-with-list-columns-and-purrr/</guid>
       <description>When I first learned about list columns, I thought, “Weird, when will I ever use these?” In the year since, list columns have become my go-to data storage method as soon as I feel like I’m herding cats. That feeling usually arises when my analysis moves from processing typical numeric and text data to iterative programming on more complex data objects like lists, subsets, models, and plots. All of which will fit very nicely within list columns.</description>
