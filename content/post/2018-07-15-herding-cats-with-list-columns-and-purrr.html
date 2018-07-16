@@ -162,16 +162,16 @@ ds_mpg</code></pre>
 <p>You can preview the plots just by calling the <code>plots</code> variable:</p>
 <pre class="r"><code>ds_mpg$plots</code></pre>
 <pre><code>## [[1]]</code></pre>
-<p><img src="/post/2018-07-11-weird-data-live-in-list-columns_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/post/2018-07-15-herding-cats-with-list-columns-and-purrr_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre><code>## 
 ## [[2]]</code></pre>
-<p><img src="/post/2018-07-11-weird-data-live-in-list-columns_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p><img src="/post/2018-07-15-herding-cats-with-list-columns-and-purrr_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
 <pre><code>## 
 ## [[3]]</code></pre>
-<p><img src="/post/2018-07-11-weird-data-live-in-list-columns_files/figure-html/unnamed-chunk-9-3.png" width="672" /></p>
+<p><img src="/post/2018-07-15-herding-cats-with-list-columns-and-purrr_files/figure-html/unnamed-chunk-9-3.png" width="672" /></p>
 <pre><code>## 
 ## [[4]]</code></pre>
-<p><img src="/post/2018-07-11-weird-data-live-in-list-columns_files/figure-html/unnamed-chunk-9-4.png" width="672" /></p>
+<p><img src="/post/2018-07-15-herding-cats-with-list-columns-and-purrr_files/figure-html/unnamed-chunk-9-4.png" width="672" /></p>
 <p>You can also add file names and save the plots.</p>
 <pre class="r"><code>name_plots &lt;- function(name = cyl){
   str_c(&quot;plot_&quot;, name, &quot;cyl.png&quot;)
