@@ -3,7 +3,7 @@ title: Herding cats with list columns and purrr
 author: Joe Powers
 date: '2018-07-15'
 slug: herding-cats-with-list-columns-and-purrr
-categories: []
+categories: [data science]
 tags: []
 description: ''
 featured: ''

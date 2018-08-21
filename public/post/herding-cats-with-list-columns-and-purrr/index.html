@@ -24,7 +24,7 @@
         "datePublished": "2018-07-15 00:00:00 &#43;0000 UTC",
         "dateModified" : "2018-07-15 00:00:00 &#43;0000 UTC",
         "url" : "/post/herding-cats-with-list-columns-and-purrr/",
-        "wordCount" : "1338",
+        "wordCount" : "1384",
         "keywords" : [ "Blog" ]
     }
     </script>
@@ -86,7 +86,7 @@
 
 <meta itemprop="datePublished" content="2018-07-15T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2018-07-15T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1338">
+<meta itemprop="wordCount" content="1384">
 
 
 
@@ -251,18 +251,6 @@
                 
                         <article class="mini-post">
                             <header>
-                                <h3><a href="/post/iterative-data-munging-with-make-files/">Iterative data munging with make files</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2018-07-16'>
-                                    July 16, 2018</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
                                 <h3><a href="/post/herding-cats-with-list-columns-and-purrr/">Herding cats with list columns and purrr</a></h3>
                                 
                                 <time class="published" datetime=
@@ -278,8 +266,8 @@
                                 <h3><a href="/post/">Post</a></h3>
                                 
                                 <time class="published" datetime=
-                                    '2018-07-16'>
-                                    July 16, 2018</time>
+                                    '2018-07-15'>
+                                    July 15, 2018</time>
                             </header>
                             
 
@@ -516,6 +504,8 @@ library(magrittr)
 library(modelr) </code></pre>
 <p>You’re probably already familiar with character, double, and integer vectors like those found in the <code>mpg</code> tibble below (Note: if you weren’t already familiar with tibbles, they are just a special type of dataframe that has been formatted to handle list columns).</p>
 <pre class="r"><code>mpg %&gt;% head(5)</code></pre>
+<pre><code>## Warning in seq.default(along = x): partial argument match of &#39;along&#39; to
+## &#39;along.with&#39;</code></pre>
 <pre><code>## # A tibble: 5 x 11
 ##   manufacturer model displ  year   cyl trans drv     cty   hwy fl    class
 ##   &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
@@ -541,19 +531,21 @@ ds_mpg</code></pre>
 ## 4     8 &lt;tibble [70 × 10]&gt;</code></pre>
 <p>Each element of the list column <code>data</code> contains all the data associated with that cylinder count. Let’s view the first element.</p>
 <pre class="r"><code>ds_mpg$data[[1]]</code></pre>
+<pre><code>## Warning in seq.default(along = x): partial argument match of &#39;along&#39; to
+## &#39;along.with&#39;</code></pre>
 <pre><code>## # A tibble: 81 x 10
-##    manufacturer model      displ  year trans drv     cty   hwy fl    class
-##    &lt;chr&gt;        &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 audi         a4           1.8  1999 auto… f        18    29 p     comp…
-##  2 audi         a4           1.8  1999 manu… f        21    29 p     comp…
-##  3 audi         a4           2    2008 manu… f        20    31 p     comp…
-##  4 audi         a4           2    2008 auto… f        21    30 p     comp…
-##  5 audi         a4 quattro   1.8  1999 manu… 4        18    26 p     comp…
-##  6 audi         a4 quattro   1.8  1999 auto… 4        16    25 p     comp…
-##  7 audi         a4 quattro   2    2008 manu… 4        20    28 p     comp…
-##  8 audi         a4 quattro   2    2008 auto… 4        19    27 p     comp…
-##  9 chevrolet    malibu       2.4  1999 auto… f        19    27 r     mids…
-## 10 chevrolet    malibu       2.4  2008 auto… f        22    30 r     mids…
+##    manufacturer model    displ  year trans   drv     cty   hwy fl    class
+##    &lt;chr&gt;        &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 audi         a4         1.8  1999 auto(l… f        18    29 p     comp…
+##  2 audi         a4         1.8  1999 manual… f        21    29 p     comp…
+##  3 audi         a4         2    2008 manual… f        20    31 p     comp…
+##  4 audi         a4         2    2008 auto(a… f        21    30 p     comp…
+##  5 audi         a4 quat…   1.8  1999 manual… 4        18    26 p     comp…
+##  6 audi         a4 quat…   1.8  1999 auto(l… 4        16    25 p     comp…
+##  7 audi         a4 quat…   2    2008 manual… 4        20    28 p     comp…
+##  8 audi         a4 quat…   2    2008 auto(s… 4        19    27 p     comp…
+##  9 chevrolet    malibu     2.4  1999 auto(l… f        19    27 r     mids…
+## 10 chevrolet    malibu     2.4  2008 auto(l… f        22    30 r     mids…
 ## # ... with 71 more rows</code></pre>
 <p>As you can see above the list column elements are entire tibbles, all lined up for iterative processing with for loops or–better still–<code>purrr's</code> map functions. In the next chunks I apply a custom function that fits a linear model to each tibble in the list column, and then saves the model output in yet another list column. This avoids repetition in code and maintains alignment of data, models, and outputs. Not bad.</p>
 <pre class="r"><code># Create a custom function for modeling the data
@@ -646,13 +638,15 @@ ds_mpg %&lt;&gt;%
   ) 
 
 ds_mpg</code></pre>
+<pre><code>## Warning in seq.default(along = x): partial argument match of &#39;along&#39; to
+## &#39;along.with&#39;</code></pre>
 <pre><code>## # A tibble: 4 x 6
-##     cyl data               model    grid               pred         plots 
-##   &lt;int&gt; &lt;list&gt;             &lt;list&gt;   &lt;list&gt;             &lt;list&gt;       &lt;list&gt;
-## 1     4 &lt;tibble [81 × 10]&gt; &lt;S3: lm&gt; &lt;tibble [500 × 1]&gt; &lt;tibble [50… &lt;S3: …
-## 2     5 &lt;tibble [4 × 10]&gt;  &lt;S3: lm&gt; &lt;tibble [1 × 1]&gt;   &lt;tibble [1 … &lt;S3: …
-## 3     6 &lt;tibble [79 × 10]&gt; &lt;S3: lm&gt; &lt;tibble [500 × 1]&gt; &lt;tibble [50… &lt;S3: …
-## 4     8 &lt;tibble [70 × 10]&gt; &lt;S3: lm&gt; &lt;tibble [500 × 1]&gt; &lt;tibble [50… &lt;S3: …</code></pre>
+##     cyl data             model    grid             pred            plots  
+##   &lt;int&gt; &lt;list&gt;           &lt;list&gt;   &lt;list&gt;           &lt;list&gt;          &lt;list&gt; 
+## 1     4 &lt;tibble [81 × 1… &lt;S3: lm&gt; &lt;tibble [500 × … &lt;tibble [500 ×… &lt;S3: g…
+## 2     5 &lt;tibble [4 × 10… &lt;S3: lm&gt; &lt;tibble [1 × 1]&gt; &lt;tibble [1 × 2… &lt;S3: g…
+## 3     6 &lt;tibble [79 × 1… &lt;S3: lm&gt; &lt;tibble [500 × … &lt;tibble [500 ×… &lt;S3: g…
+## 4     8 &lt;tibble [70 × 1… &lt;S3: lm&gt; &lt;tibble [500 × … &lt;tibble [500 ×… &lt;S3: g…</code></pre>
 <p>You can preview the plots just by calling the <code>plots</code> variable:</p>
 <pre class="r"><code>ds_mpg$plots</code></pre>
 <pre><code>## [[1]]</code></pre>
@@ -694,6 +688,12 @@ ds_mpg %&lt;&gt;%
     <ul>
         
             
+            
+                <i class="fa fa-folder"></i>
+                
+                
+                <li><a class="article-category-link" href="/categories/data-science">data science</a></li>
+                
             
         
     </ul>
@@ -739,9 +739,6 @@ ds_mpg %&lt;&gt;%
 <ul class="actions pagination">
     
 
-    
-        <li><a href="/post/iterative-data-munging-with-make-files/"
-                class="button big next">Iterative data munging with make files</a></li>
     
 </ul>
 
@@ -895,20 +892,6 @@ ds_mpg %&lt;&gt;%
           <article class="mini-post">
             <header>
               <h3>
-                <a href="/post/iterative-data-munging-with-make-files/">Iterative data munging with make files</a>
-              </h3>
-              
-              <time class="published" datetime='2018-07-16'>
-                July 16, 2018
-              </time>
-            </header>
-            
-
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
                 <a href="/post/herding-cats-with-list-columns-and-purrr/">Herding cats with list columns and purrr</a>
               </h3>
               
@@ -926,8 +909,8 @@ ds_mpg %&lt;&gt;%
                 <a href="/post/">Post</a>
               </h3>
               
-              <time class="published" datetime='2018-07-16'>
-                July 16, 2018
+              <time class="published" datetime='2018-07-15'>
+                July 15, 2018
               </time>
             </header>
             
@@ -960,29 +943,7 @@ ds_mpg %&lt;&gt;%
           <article>
             <header>
               
-                Uncategorized
-                <span style="float:right;">4</span>
-              
-            </header>
-          </article>
-        </p>
-        
-        <p>
-          <article>
-            <header>
-              
-                <a href="/categories/munging/">munging</a>
-                <span style="float:right;">1</span>
-              
-            </header>
-          </article>
-        </p>
-        
-        <p>
-          <article>
-            <header>
-              
-                <a href="/categories/wrangling/">wrangling</a>
+                <a href="/categories/data-science/">data science</a>
                 <span style="float:right;">1</span>
               
             </header>
