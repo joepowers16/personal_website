@@ -27,7 +27,7 @@ library(modelr)
 ```
 
 You're probably already familiar with character, double, and integer vectors like those found in the `mpg` tibble below (Note: if you weren't already familiar with tibbles, they are just a special type of dataframe that has been formatted to handle list columns). 
-```{r}
+```{r message=FALSE, warning=FALSE}
 mpg %>% head(5)
 ```
 

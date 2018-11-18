@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Post on Joseph T Powers</title>
-    <link>/post/</link>
-    <description>Recent content in Post on Joseph T Powers</description>
+    <title>Functions on Joseph T Powers</title>
+    <link>/categories/functions/</link>
+    <description>Recent content in Functions on Joseph T Powers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 17 Nov 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/functions/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       <guid>/post/write-clearer-custom-functions-in-r-using-quasiquotation/</guid>
       <description>TLDR You can utilize dplyr verbs in your custom functions if you know when to use quasiquotation functions within your custom functions. This post demonstrates standard use cases for quasiquotation functions enquo() &amp;amp; !!, enquos() &amp;amp; !!!, quo_name() and the helper function :=, which is godsend for creating new variables with custom functions.
  Why use quasiquotation? I’ll assume that readers of this post rely on dplyr &amp;amp; tidyr for data manipulation, but have experienced some frustration when trying to turn their best data manipulation scripts into custom functions that rely on dplyr and tidyr verbs.</description>
-    </item>
-    
-    <item>
-      <title>Herding cats with list columns and purrr</title>
-      <link>/post/herding-cats-with-list-columns-and-purrr/</link>
-      <pubDate>Sun, 15 Jul 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/herding-cats-with-list-columns-and-purrr/</guid>
-      <description>When I first learned about list columns, I thought, “Weird, when will I ever use these?” In the year since, list columns have become my go-to data storage method as soon as I feel like I’m herding cats. That feeling usually arises when my analysis moves from processing typical numeric and text data to iterative programming on more complex data objects like lists, subsets, models, and plots. All of which will fit very nicely within list columns.</description>
     </item>
     
   </channel>

@@ -1,0 +1,14 @@
+---
+title: arguments in custom functions
+author: Joe Powers
+date: '2018-11-17'
+slug: arguments-in-custom-functions
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+---
+
