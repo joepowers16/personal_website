@@ -1,3 +1,6 @@
+# Ignore this because Netlify will generate it?
+public/
+
 # History files
 .Rhistory
 .Rapp.history
