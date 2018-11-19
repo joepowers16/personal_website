@@ -67,7 +67,7 @@ ds_mt %&gt;% double_dplyr(x = cyl)</code></pre>
 <h1>Writing custom functions with quasiquotation</h1>
 <p>I have read up on quasiquotation in detail, and for brief moments felt like I understood it. But when I am writing functions that utilize quasiquotation I prefer to think of this fairy tale:</p>
 <p><img src="https://media.giphy.com/media/tpTOw6sljB2U/giphy.gif" style="display: block; margin: auto;" /></p>
-<p>My calling arguments are like genies. Magic, but dangerous to have floating around loose inside of my function. <code>enquo()</code> traps the genie in the bottle for safe transport, and <code>!!</code> rubs the bottle to let him out and grant my wishes.</p>
+<p>The calling arguments users supply to your function are like genies: Magic, but dangerous to have floating around loose inside the function. <code>enquo()</code> traps the genie in the bottle for safe transport, and <code>!!</code> rubs the bottle to let him out and grant your wishes.</p>
 <pre class="r"><code>double_dplyr &lt;- function(data, x){
   x &lt;- enquo(x)
   data %&gt;% 

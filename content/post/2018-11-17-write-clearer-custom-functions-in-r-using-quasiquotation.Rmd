@@ -80,7 +80,7 @@ knitr::include_graphics("https://media.giphy.com/media/tpTOw6sljB2U/giphy.gif")
 #https://media.giphy.com/media/tpTOw6sljB2U/giphy.gif
 ```
 
-My calling arguments are like genies. Magic, but dangerous to have floating around loose inside of my function. `enquo()` traps the genie in the bottle for safe transport, and `!!` rubs the bottle to let him out and grant my wishes. 
+The calling arguments users supply to your function are like genies: Magic, but dangerous to have floating around loose inside the function. `enquo()` traps the genie in the bottle for safe transport, and `!!` rubs the bottle to let him out and grant your wishes. 
 ```{r}
 double_dplyr <- function(data, x){
   x <- enquo(x)
