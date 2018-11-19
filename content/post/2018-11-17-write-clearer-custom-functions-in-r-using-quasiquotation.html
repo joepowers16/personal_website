@@ -19,7 +19,7 @@ linktitle: ''
 <p><img src="https://media.giphy.com/media/qs6ev2pm8g9dS/giphy.gif" style="display: block; margin: auto;" /></p>
 <div id="tldr" class="section level1">
 <h1>TLDR</h1>
-<p>The functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code> handle their arguments differently than most R functions. If you know when to use quasiquotation functions like <code>enquo()</code> &amp; <code>!!</code>, you can quickly write very powerful custom functions that take full advantage of the functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code>. This post demonstrates standard use cases for quasiquotation functions <code>enquo()</code> &amp; <code>!!</code>, <code>enquos()</code> &amp; <code>!!!</code>, <code>quo_name()</code> and the helper function <code>:=</code>, which is godsend for naming new variables inside of custom functions.</p>
+<p>The functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code> handle their arguments differently than most R functions, and this can complicate writing your own custom functions. However, if you know when to use quasiquotation functions like <code>enquo()</code> &amp; <code>!!</code>, you can quickly write very powerful custom functions that take full advantage of the functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code>. This post demonstrates standard use cases for quasiquotation functions <code>enquo()</code> &amp; <code>!!</code>, <code>enquos()</code> &amp; <code>!!!</code>, <code>quo_name()</code> and the helper function <code>:=</code>, which is godsend for naming new variables inside of custom functions.</p>
 </div>
 <div id="why-use-quasiquotation" class="section level1">
 <h1>Why use quasiquotation?</h1>
