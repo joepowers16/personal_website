@@ -16,13 +16,13 @@ linktitle: ''
 
 
 
+<p><img src="https://media.giphy.com/media/qs6ev2pm8g9dS/giphy.gif" style="display: block; margin: auto;" /></p>
 <div id="tldr" class="section level1">
 <h1>TLDR</h1>
-<p>You can utilize <code>dplyr</code> verbs in your custom functions if you know when to use quasiquotation functions within your custom functions. This post demonstrates standard use cases for quasiquotation functions <code>enquo()</code> &amp; <code>!!</code>, <code>enquos()</code> &amp; <code>!!!</code>, <code>quo_name()</code> and the helper function <code>:=</code>, which is godsend for creating new variables with custom functions.</p>
+<p>The functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code> handle their arguments differently than most R functions. If you know when to use quasiquotation functions like <code>enquo()</code> &amp; <code>!!</code>, you can quickly write very powerful custom functions that take full advantage of the functions in <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code>. This post demonstrates standard use cases for quasiquotation functions <code>enquo()</code> &amp; <code>!!</code>, <code>enquos()</code> &amp; <code>!!!</code>, <code>quo_name()</code> and the helper function <code>:=</code>, which is godsend for naming new variables inside of custom functions.</p>
 </div>
 <div id="why-use-quasiquotation" class="section level1">
 <h1>Why use quasiquotation?</h1>
-<p><img src="https://media.giphy.com/media/qs6ev2pm8g9dS/giphy.gif" style="display: block; margin: auto;" /></p>
 <p>I’ll assume that readers of this post rely on <code>dplyr</code> &amp; <code>tidyr</code> for data manipulation, but have experienced some frustration when trying to turn their best data manipulation scripts into custom functions that rely on <code>dplyr</code> and <code>tidyr</code> verbs. Quasiquotation can relieve that pain.</p>
 <p>I’ll start by making a small dataframe <code>ds_mt</code> for demonstration purposes.</p>
 <pre class="r"><code>library(tidyverse)
