@@ -18,14 +18,14 @@ linktitle: ''
 knitr::opts_chunk$set(error = TRUE)
 ```
 
-# TLDR
-You can utilize `dplyr` verbs in your custom functions if you know when to use quasiquotation functions within your custom functions. This post demonstrates standard use cases for quasiquotation functions `enquo()` & `!!`, `enquos()` & `!!!`, `quo_name()` and the helper function `:=`, which is godsend for creating new variables with custom functions. 
-
-# Why use quasiquotation?
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("https://media.giphy.com/media/qs6ev2pm8g9dS/giphy.gif")
 ```
 
+# TLDR
+The functions in `dplyr`, `tidyr`, and `ggplot2` handle their arguments differently than most R functions. If you know when to use quasiquotation functions like `enquo()` & `!!`, you can quickly write very powerful custom functions that take full advantage of the functions in `dplyr`, `tidyr`, and `ggplot2`. This post demonstrates standard use cases for quasiquotation functions `enquo()` & `!!`, `enquos()` & `!!!`, `quo_name()` and the helper function `:=`, which is godsend for naming new variables inside of custom functions. 
+
+# Why use quasiquotation?
 I'll assume that readers of this post rely on `dplyr` & `tidyr` for data manipulation, but have experienced some frustration when trying to turn their best data manipulation scripts into custom functions that rely on `dplyr` and `tidyr` verbs. Quasiquotation can relieve that pain.
 
 I'll start by making a small dataframe `ds_mt` for demonstration purposes.
