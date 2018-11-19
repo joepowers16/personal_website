@@ -95,7 +95,7 @@ ds_mt %&gt;% double_dplyr(x = cyl)</code></pre>
 ## 6:     mutate(!!new_var =
 ##                         ^</code></pre>
 <p>… but now the above function does not work. The code breaks at the “=” sign.</p>
-<p>Naming <code>new_var</code> as a string will not help either. Because in this context <code>mutate()</code> is not going to look for the calling argument that <code>new_var</code> maps to. In this context <code>mutate()</code> will just create <code>new_var</code> rather than “cyl_2” as the new variable.</p>
+<p>Naming <code>new_var</code> as a string will not help either. Because in this context <code>mutate()</code> is not going to look for the calling argument that <code>new_var</code> maps to. In this context <code>mutate()</code> will create a new variable named <code>new_var</code> rather than “cyl_2”.</p>
 <pre class="r"><code>double_dplyr &lt;- function(data, x, new_var){
   x &lt;- enquo(x)
   new_var &lt;- enquo(new_var)

@@ -106,7 +106,7 @@ double_dplyr <- function(data, x, new_var){
 
 ... but now the above function does not work. The code breaks at the "=" sign. 
 
-Naming `new_var` as a string will not help either. Because in this context `mutate()` is not going to look for the calling argument that `new_var` maps to. In this context `mutate()` will just create `new_var` rather than "cyl_2" as the new variable. 
+Naming `new_var` as a string will not help either. Because in this context `mutate()` is not going to look for the calling argument that `new_var` maps to. In this context `mutate()` will create a new variable named `new_var` rather than "cyl_2". 
 ```{r}
 double_dplyr <- function(data, x, new_var){
   x <- enquo(x)
