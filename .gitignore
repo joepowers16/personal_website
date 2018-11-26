@@ -1,5 +1,8 @@
-# Ignore this because Netlify will generate it?
+# Ignore public/ because Netlify will generate it
 public/
+
+# Ignore drafts folder until they are moved into your content/posts/ folder
+drafts/
 
 # History files
 .Rhistory
@@ -34,9 +37,6 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
-# Don't push your drafts
-drafts/
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
