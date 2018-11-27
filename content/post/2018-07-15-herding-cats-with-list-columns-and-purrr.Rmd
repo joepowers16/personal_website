@@ -43,7 +43,7 @@ ds_mpg
 ```
 
 Each element of the list column `data` contains all the data associated with that cylinder count. Let's view the first element.
-```{r}
+```{r warning=FALSE, message=FALSE}
 ds_mpg$data[[1]]
 ```
 
@@ -83,7 +83,7 @@ ds_mpg
 ```
 
 Finally let's create plots for each cylinder count, add custom titles, and save the results in out last list column `plots`.
-```{r}
+```{r message=FALSE, warning=FALSE}
 # Create custom plotting function
 gg_foo <- function(data_orig = data, data_pred = pred, cyl = cyl){
   # generate plot title

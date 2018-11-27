@@ -47,8 +47,6 @@ ds_mpg</code></pre>
 ## 4     8 &lt;tibble [70 × 10]&gt;</code></pre>
 <p>Each element of the list column <code>data</code> contains all the data associated with that cylinder count. Let’s view the first element.</p>
 <pre class="r"><code>ds_mpg$data[[1]]</code></pre>
-<pre><code>## Warning in seq.default(along = x): partial argument match of &#39;along&#39; to
-## &#39;along.with&#39;</code></pre>
 <pre><code>## # A tibble: 81 x 10
 ##    manufacturer model    displ  year trans   drv     cty   hwy fl    class
 ##    &lt;chr&gt;        &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
@@ -154,8 +152,6 @@ ds_mpg %&lt;&gt;%
   ) 
 
 ds_mpg</code></pre>
-<pre><code>## Warning in seq.default(along = x): partial argument match of &#39;along&#39; to
-## &#39;along.with&#39;</code></pre>
 <pre><code>## # A tibble: 4 x 6
 ##     cyl data             model    grid             pred            plots  
 ##   &lt;int&gt; &lt;list&gt;           &lt;list&gt;   &lt;list&gt;           &lt;list&gt;          &lt;list&gt; 
