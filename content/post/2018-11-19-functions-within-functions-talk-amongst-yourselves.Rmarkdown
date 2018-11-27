@@ -1,0 +1,156 @@
+---
+title: 'Functions within functions: Talk amongst yourselves'
+author: Joe Powers
+date: '2018-11-19'
+slug: functions-within-functions-talk-amongst-yourselves
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+draft: true
+---
+
+```{r setup, cache=F, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics("https://media.giphy.com/media/l2SpQRuCQzY1RXHqM/giphy.gif")
+```
+
+# Passing arguments within nested functions
+```{r eval=FALSE}
+foo <- function(data, var_name) {
+  require(dplyr)
+
+  foo_check_inputs(data) # you must name the argument explicitly
+
+  var_name <- enquo(var_name)
+
+  data %>% pull(!!var_name) %>% mean
+}
+
+# Internal checks
+foo_check_inputs <- function(data = data) {
+  if (!is.data.frame(data)) {
+    stop(
+      crayon::bold(crayon::green(
+        "Argument supplied to `data` is not a data.frame. Supply a data.frame or tibble to proceed."
+      )),
+      call. = FALSE
+    )
+  }
+}
+
+foo(mtcars, mpg)
+
+# deliberate fail
+not_data <- "5"
+foo(not_data, mpg)
+```
+
+# Passing arguments from function to function-within-function
+```{r eval=FALSE}
+foo <- function(data, var_name) {
+  require(dplyr)
+
+  foo_check_inputs(data) # still must name the argument explicitly
+
+  var_name <- enquo(var_name)
+
+  data %>% pull(!!var_name) %>% mean
+}
+
+foo_check_inputs <- function(data) { # ALSO WORKS vs. data = data
+  if (!is.data.frame(data)) {
+    stop(
+      crayon::bold(crayon::green(
+        "Argument supplied to `data` is not a data.frame. Supply a data.frame or tibble to proceed."
+      )),
+      call. = FALSE
+    )
+  }
+}
+
+foo(mtcars, mpg)
+
+# deliberate fail
+not_data <- "5"
+foo(not_data, mpg)
+```
+
+
+```{r eval=FALSE}
+foo <- function(data, var_name) {
+  require(dplyr)
+
+  foo_check_inputs() # Leaving argument empty causes failure
+
+  var_name <- enquo(var_name)
+
+  data %>% pull(!!var_name) %>% mean
+}
+
+foo_check_inputs <- function(data = data) {
+  if (!is.data.frame(data)) {
+    stop(
+      crayon::bold(crayon::green(
+        "Argument supplied to `data` is not a data.frame. Supply a data.frame or tibble to proceed."
+      )),
+      call. = FALSE
+    )
+  }
+}
+
+foo(mtcars, mpg)
+
+# deliberate fail
+not_data <- "5"
+foo(not_data, mpg)
+```
+
+# Testing mulitple inputs
+```{r eval=FALSE}
+foo <- function(data, var_name) {
+  require(dplyr)
+
+  var_name <- enquo(var_name)
+  
+  foo_check_inputs(data, var_name) # still must name the argument explicitly
+
+  data %>% pull(!!var_name) %>% mean
+}
+
+foo_check_inputs <- function(data, var_name) {
+  if (!is.data.frame(data)) {
+    stop(
+      crayon::bold(crayon::green(
+        "Argument supplied to `data` is not a data.frame. Supply a data.frame or tibble to proceed."
+      )),
+      call. = FALSE
+    )
+  }
+  
+  v_var_name <- data %>% pull(!!var_name)
+  if (!is.numeric(v_var_name)) {
+    stop(
+      crayon::bold(crayon::green(
+        "Argument supplied to `var_name` is not a numeric variable. Supply a numeric variable to proceed."
+      )),
+      call. = FALSE
+    )
+  }
+}
+
+foo(mtcars, mpg)
+
+# deliberate fails
+not_data <- "5"
+foo(not_data, mpg)
+
+mtcars %>% mutate(mpg = as.character(mpg)) %>% 
+  foo(mpg)
+```

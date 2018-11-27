@@ -1,0 +1,26 @@
+---
+title: Packrat Workflow
+author: Joe Powers
+date: '2018-11-27'
+slug: packrat-workflow
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+draft: true
+---
+
+You only need 4 packrat-related files pushed to github .Rprofile, which lives in your project directory, and init.R, packrat.lock, and packrat.opts, which live in packrat/. 
+
+As long as those 4 files make it into github, anyone who clones your repo can run packrat::retore() in their console and their Rproject will have the same package versions as your Rproject. 
+
+To ensure that only .Rprofile, packrat.lock, and packrat.opts make it into github,  your gitignore file include the following files and folders.
+```{r eval=FALSE}
+# Packrat
+packrat/lib*/
+packrat/src/
+```
+

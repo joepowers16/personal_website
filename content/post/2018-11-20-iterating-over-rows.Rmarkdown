@@ -1,0 +1,251 @@
+---
+title: Iterating over rows
+author: Joe Powers
+date: '2018-11-20'
+slug: iterating-over-rows
+categories: []
+tags: []
+description: ''
+featured: ''
+featuredalt: ''
+featuredpath: ''
+linktitle: ''
+draft: true
+---
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+
+# sample data
+ds_mt3 <- mtcars %>% slice(1:3)
+```
+
+The big takeaway is that purrr functions do not utilize tidy evaluation. In layman's terms the purrr functions will not impute `ds$` onto the front of their calling arguments. However, when wrapped within a `dplyr` function such as `mutate()`, then the `dplyr` function will allow the `purrr` function to utilize tidy evaluation. 
+
+So this code works fine
+```{r}
+ds_mt3 %>% 
+  mutate(
+    sum = 
+      pmap(
+        .l = list(cyl, wt, mpg), 
+        .f = sum
+      )
+  )
+```
+
+This doesn't 
+```{r}
+ds_mt3 %>% 
+  # mutate(
+  #   statement = 
+      pmap(
+        .l = list(cyl, wt, mpg), 
+        .f = sum
+      )
+  # )
+```
+
+Because it needs to look like this
+```{r}
+pmap(
+  .l = list(ds_mt3$cyl, ds_mt3$wt, ds_mt3$mpg), 
+  .f = sum
+)
+```
+
+or this
+```{r}
+with(ds_mt3, 
+  pmap(
+    .l = list(cyl, wt, mpg), 
+    .f = sum
+  )
+)
+```
+
+or this
+```{r}
+ds_mt3 %>% {
+  pmap(
+    .l = list(.$cyl, .$wt, .$mpg), 
+    .f = sum
+  ) 
+}
+```
+
+# Create demo data & a custom function
+```{r}
+ds_mt <- 
+  ds_mt3 %>% 
+    rownames_to_column("model") %>% 
+    mutate(
+      am = factor(am, labels = c("auto", "manual")) %>% as.character(), 
+      vs = factor(vs, labels = c("V", "S"))
+    ) %>% 
+  select(model, mpg, wt, cyl, am, vs)
+```
+
+```{r}
+foo <- function(model, am, mpg){
+  print(
+    paste("The", model, "has a", am, "transmission and gets", mpg, "mpgs.")
+  )
+}
+```
+
+# A rowwise for-loop
+This loop navigates its dataframe in a rowwise manner because it uses the index from its header as the row number to update its data pull with each iteration. 
+```{r}
+for (row in 1:nrow(ds_mt)) {
+  am    <- ds_mt[row, "am"]
+  mpg   <- ds_mt[row, "mpg"]
+  model <- ds_mt[row, "model"]
+  
+  print(
+    paste("The", model, "has a", am, "transmission and gets", mpg, "mpgs.")
+  )
+}
+```
+
+Other ways to same output: 
+```{r}
+for (row in 1:nrow(ds_mt)) {
+  model <- ds_mt[row, "model"]
+  am    <- ds_mt[row, "am"]
+  mpg   <- ds_mt[row, "mpg"]
+  
+  foo(model = model, am = am, mpg = mpg)
+}
+```
+
+```{r}
+for (row in 1:nrow(ds_mt)) {
+  foo(
+    model = ds_mt[row, "model"], 
+    am    = ds_mt[row, "am"],
+    mpg   = ds_mt[row, "mpg"]
+  )
+}
+```
+
+# A rowwise apply()
+```{r}
+row.names(ds_mt) <- NULL # to avoid later creation of a named vector as your output
+
+# Notice how my custom function foo needs to be redefined as an anonymous function to pass receive its calling arguments within the apply()
+out <- 
+  apply(
+    ds_mt, 
+    MARGIN = 1, 
+    FUN = function(ds) 
+      foo(
+        model = ds["model"],
+        am = ds["am"],
+        mpg = ds["mpg"]
+      )
+  ) 
+
+out
+```
+
+```{r}
+class(out) # output is a character vector but would have been a named vector had I not set rownames to NULL
+```
+
+# Using purrr::map()
+quick note on `pmap()` vs. `pwalk()`:
+```{r}
+# pmap() returns a list. In this case a named list.
+ds_mt %>% 
+  select(am, model, mpg) %>% 
+  pmap(.l = ., .f = foo) %>%
+  str()
+
+# pwalk() outputs the side effect (i.e., 3 printed strings) and then passes the dataframe along unchanged. 
+ds_mt %>% 
+  select(am, model, mpg) %>% 
+  pwalk(.l = ., .f = foo) %>%
+  str()
+```
+
+```{r}
+# This works
+ds_mt %>% 
+  mutate(new_var = 
+    pmap(
+      .l = 
+        list(
+          model = model,
+          am = am,
+          mpg = mpg
+        ),
+      .f = foo
+    )
+  )
+```
+
+This doesn't work because `ds_mt` is not "imputed" as "ds_mt$" before the calling arguments of `list()` unless a dplyr function like `mutate()` is present.
+```{r}
+ds_mt %>% 
+  pmap(
+    .l = 
+      list(
+        model = model,
+        am = am,
+        mpg = mpg
+      ),
+    .f = foo
+  )
+```
+
+This works because the dataframe has only the variables listed in the formal arguments of `foo()`, the `.f` argument in `pmap()`
+```{r}
+# Order doesn't matter but you can't have unused variables present
+ds_mt %>% 
+  select(model, am, mpg) %>% 
+  pwalk(.l = ., .f = foo)
+
+ds_mt %>% 
+  select(am, model, mpg) %>% 
+  pwalk(.l = ., .f = foo)
+```
+
+Unused variables will break `pwalk()` unless you use `{}`.
+```{r}
+# Excess variables --> FAIL
+ds_mt %>% 
+  pwalk(.l = ., .f = foo)
+
+ds_mt %>% { 
+  pwalk(.l = list(model=.$model, am=.$am, mpg=.$mpg), .f = foo)
+}
+```
+
+
+# TBD
+Supplying anonymous functions to `map()`
+```{r}
+# WORKS
+ds_mt %>% 
+  select(model, vs, am) %>% 
+  pmap(
+    .f = function(model, vs, am) paste(model, vs, am)
+  )
+
+# FAIL
+ds_mt %>% 
+  select(model, vs, am) %>% {
+  pmap(
+    .l = .,
+    .f = function(a,b,c) paste(a = .$model, b = .$vs, c = .$am)
+  )
+}
+
+# FAILS
+ds_mt %>% 
+  select(model, vs, am) %>% 
+  pmap(
+    .f = function(a, b, c) paste(model, vs, am)
+  )
+```
